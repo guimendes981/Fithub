@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <TouchableOpacity onPress={() => alert('Hello, world!')}>
+        <Text>Press me</Text>
+      </TouchableOpacity>
       <StatusBar style="auto" />
     </View>
   );
