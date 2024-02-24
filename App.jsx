@@ -5,7 +5,11 @@ import BottomBar from './src/components/BottomBar';
 
 export default function App() {
   return (
-    <CadastroForm />
+    <View style={styles.container}>
+        <CadastroForm />
+      <BottomBar />
+      <StatusBar style="auto" />
+    </View>
   );
 }
 

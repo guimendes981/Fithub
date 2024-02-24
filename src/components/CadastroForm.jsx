@@ -129,30 +129,15 @@ export default function CadastroForm({ navigation }) {
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{cadastrarError}</Text>
-      <View style={styles.bottomBar}>
-      <TouchableOpacity onPress={() => navigation.navigate('Treino')} style={styles.iconContainer}>
-        <Ionicons name="barbell" size={24} color="#FFF" />
-        <Text style={styles.iconText}>Treino</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Dieta')} style={styles.iconContainer}>
-        <Ionicons name="nutrition" size={24} color="#FFF" />
-        <Text style={styles.iconText}>Dieta</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconContainer}>
-        <Ionicons name="home" size={24} color="#FFF" />
-        <Text style={styles.iconText}>Home</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Academias')} style={styles.iconContainer}>
-        <Ionicons name="gym" size={24} color="#FFF" />
-        <Text style={styles.iconText}>Academias</Text>
-      </TouchableOpacity>
-    </View>
+      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    height: '100%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
