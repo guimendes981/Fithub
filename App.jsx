@@ -1,14 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import CadastroForm from './src/components/CadastroForm';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => alert('Hello, world!')}>
-        <Text>Press me</Text>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
+    <CadastroForm />
   );
 }
 
