@@ -59,6 +59,9 @@ export default function CadastroForm({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <View>
+        
+      </View>
       <Text style={styles.title}>Inscreva-se</Text>
       <TextInput
         placeholder="Nome"
@@ -113,7 +116,7 @@ export default function CadastroForm({ navigation }) {
         </View>
       </View>
       <View style={styles.inlineInputs}>
-        <View style={[styles.input, styles.inlineInput]}>
+        <View style={[styles.input, styles.input]}>
           <TouchableOpacity onPress={() => setAtivo('Sim')}>
             <View style={styles.selectContainer}>
               <Text>{ativo === 'Sim' ? 'Ativo' : ativo === 'Não' ? 'Sedentário' : 'Ativo (Sim/Não)'}</Text>
@@ -126,6 +129,24 @@ export default function CadastroForm({ navigation }) {
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{cadastrarError}</Text>
+      <View style={styles.bottomBar}>
+      <TouchableOpacity onPress={() => navigation.navigate('Treino')} style={styles.iconContainer}>
+        <Ionicons name="barbell" size={24} color="#FFF" />
+        <Text style={styles.iconText}>Treino</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Dieta')} style={styles.iconContainer}>
+        <Ionicons name="nutrition" size={24} color="#FFF" />
+        <Text style={styles.iconText}>Dieta</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconContainer}>
+        <Ionicons name="home" size={24} color="#FFF" />
+        <Text style={styles.iconText}>Home</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Academias')} style={styles.iconContainer}>
+        <Ionicons name="gym" size={24} color="#FFF" />
+        <Text style={styles.iconText}>Academias</Text>
+      </TouchableOpacity>
+    </View>
     </View>
   );
 }
@@ -162,7 +183,18 @@ const styles = StyleSheet.create({
   inlineInput: {
     width: '48%', 
   },
+  bottomInput: {
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
+  },
   selectContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -183,5 +215,21 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: '#3DEC63',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+  },
+  iconContainer: {
+    alignItems: 'center',
+  },
+  iconText: {
+    color: '#FFF',
+    marginTop: 5,
   },
 });

@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CadastroForm from './src/components/CadastroForm';
+import BottomBar from './src/components/BottomBar';
 
 export default function App() {
   return (
