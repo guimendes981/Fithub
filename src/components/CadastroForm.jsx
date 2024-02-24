@@ -34,7 +34,6 @@ export default function CadastroForm({ navigation }) {
       return;
     }
 
-    // Mude os estados para os valores correspondentes
     switch (sexo) {
       case 'M':
         setSexo('Masculino');
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inlineInput: {
-    width: '48%', // Ajuste a largura conforme necessário
+    width: '48%', 
   },
   selectContainer: {
     flexDirection: 'row',
