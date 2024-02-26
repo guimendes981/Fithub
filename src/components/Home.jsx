@@ -1,8 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Home({ navigation }) {
+  const [catFact, setCatFact] = useState('');
+
+  useEffect(() => {
+    fetchCatFact();
+  }, []);
+
+  const fetchCatFact = async () => {
+    try {
+      const response = await fetch('https://cat-fact.herokuapp.com/facts/random');
+      const data = await response.json();
+      setCatFact(data.text);
+    } catch (error) {
+      console.error('Error fetching cat fact:', error);
+    }
+  };
+
   const goToProfile = () => {
     navigation.navigate('Profile');
   };
@@ -13,7 +29,7 @@ export default function Home({ navigation }) {
         <Ionicons name="person" size={24} color="#3DEC63" />
       </TouchableOpacity>
       <View style={styles.banner}>
-        <Text style={styles.bannerText}>Bem-vindo!</Text>
+        <Text style={styles.bannerText}>{catFact}</Text>
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
@@ -63,6 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#3DEC63',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   infoContainer: {
     alignItems: 'center',
@@ -96,4 +113,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
   },
-});
+}
+);
