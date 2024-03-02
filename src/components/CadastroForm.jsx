@@ -13,13 +13,55 @@ export default function CadastroForm({ navigation }) {
   const [ativo, setAtivo] = useState('');
   const [cadastrarError, setCadastrarError] = useState('');
   const [sexoOptionsVisible, setSexoOptionsVisible] = useState(false);
+  const [ativoOptionsVisible, setAtivoOptionsVisible] = useState(false);
+  const [focusedField, setFocusedField] = useState('');
 
   const handleCadastro = () => {
-    // Lógica de cadastro...
+    // Verificações dos campos
+    if (!isValidEmail(email)) {
+      setCadastrarError('Email inválido');
+      return;
+    }
+    if (!idade.match(/^\d+$/)) {
+      setCadastrarError('Idade deve conter apenas números');
+      return;
+    }
+    if (!altura.match(/^\d+(\.|,)?\d*$/) && !altura.match(/^\d+$/)) {
+      setCadastrarError('Altura inválida');
+      return;
+    }
+    if (!peso.match(/^\d+$/)) {
+      setCadastrarError('Peso deve conter apenas números');
+      return;
+    }
+
+    // Dados válidos, prossegue com o cadastro
+    const userData = {
+      nome,
+      email,
+      password,
+      idade,
+      altura,
+      peso,
+      sexo,
+      ativo,
+    };
+    console.log('Dados do usuário:', userData);
+    setCadastrarError('');
+  };
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   const toggleSexoOptions = () => {
     setSexoOptionsVisible(!sexoOptionsVisible);
+    setAtivoOptionsVisible(false); // Fechar opções de ativo se estiverem abertas
+  };
+
+  const toggleAtivoOptions = () => {
+    setAtivoOptionsVisible(!ativoOptionsVisible);
+    setSexoOptionsVisible(false); // Fechar opções de sexo se estiverem abertas
   };
 
   const selectSexoOption = (selectedSexo) => {
@@ -27,24 +69,55 @@ export default function CadastroForm({ navigation }) {
     setSexoOptionsVisible(false);
   };
 
+  const selectAtivoOption = (selectedAtivo) => {
+    setAtivo(selectedAtivo);
+    setAtivoOptionsVisible(false);
+  };
+
+  const handleNomeChange = (text) => {
+    setNome(text.replace(/[^a-zA-Z\s]/g, ''));
+  };
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+  };
+
+  const handleIdadeChange = (text) => {
+    setIdade(text.replace(/[^\d]/g, ''));
+  };
+
+  const handleAlturaChange = (text) => {
+    setAltura(text.replace(/[^0-9.,]/g, ''));
+  };
+
+  const handlePesoChange = (text) => {
+    setPeso(text.replace(/[^\d]/g, ''));
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Inscreva-se</Text>
       <TextInput
         placeholder="Nome"
-        style={styles.input}
-        onChangeText={(text) => setNome(text)}
+        style={[styles.input, focusedField === 'nome' && styles.inputFocused]}
+        onFocus={() => setFocusedField('nome')}
+        onBlur={() => setFocusedField('')}
+        onChangeText={handleNomeChange}
         value={nome}
       />
       <TextInput
         placeholder="Email"
-        style={styles.input}
-        onChangeText={(text) => setEmail(text)}
+        style={[styles.input, focusedField === 'email' && styles.inputFocused]}
+        onFocus={() => setFocusedField('email')}
+        onBlur={() => setFocusedField('')}
+        onChangeText={handleEmailChange}
         value={email}
       />
       <TextInput
         placeholder="Senha"
-        style={styles.input}
+        style={[styles.input, focusedField === 'password' && styles.inputFocused]}
+        onFocus={() => setFocusedField('password')}
+        onBlur={() => setFocusedField('')}
         secureTextEntry
         onChangeText={(text) => setPassword(text)}
         value={password}
@@ -52,15 +125,19 @@ export default function CadastroForm({ navigation }) {
       <View style={styles.inlineInputs}>
         <TextInput
           placeholder="Idade"
-          style={[styles.input, styles.inlineInput]}
-          onChangeText={(text) => setIdade(text)}
+          style={[styles.input, styles.inlineInput, focusedField === 'idade' && styles.inputFocused]}
+          onFocus={() => setFocusedField('idade')}
+          onBlur={() => setFocusedField('')}
+          onChangeText={handleIdadeChange}
           value={idade}
           keyboardType="numeric"
         />
         <TextInput
           placeholder="Altura (cm)"
-          style={[styles.input, styles.inlineInput]}
-          onChangeText={(text) => setAltura(text)}
+          style={[styles.input, styles.inlineInput, focusedField === 'altura' && styles.inputFocused]}
+          onFocus={() => setFocusedField('altura')}
+          onBlur={() => setFocusedField('')}
+          onChangeText={handleAlturaChange}
           value={altura}
           keyboardType="numeric"
         />
@@ -68,12 +145,14 @@ export default function CadastroForm({ navigation }) {
       <View style={styles.inlineInputs}>
         <TextInput
           placeholder="Peso"
-          style={[styles.input, styles.inlineInput]}
-          onChangeText={(text) => setPeso(text)}
+          style={[styles.input, styles.inlineInput, focusedField === 'peso' && styles.inputFocused]}
+          onFocus={() => setFocusedField('peso')}
+          onBlur={() => setFocusedField('')}
+          onChangeText={handlePesoChange}
           value={peso}
           keyboardType="numeric"
         />
-        <View style={[styles.input, styles.inlineInput]}>
+        <View style={[styles.input, styles.inlineInput, focusedField === 'sexo' && styles.inputFocused]}>
           <TouchableOpacity onPress={toggleSexoOptions}>
             <View style={styles.selectContainer}>
               <Text>{sexo || 'Sexo (M/F)'}</Text>
@@ -92,21 +171,30 @@ export default function CadastroForm({ navigation }) {
           )}
         </View>
       </View>
-      <View style={[styles.inlineInputs, { marginBottom: 20 }]}> {/* Ajuste de margem inferior */}
-        <View style={[styles.input, styles.input]}>
-          <TouchableOpacity onPress={() => setAtivo('Sim')}>
+      <View style={styles.inlineInputs}>
+        <View style={[styles.input, styles.inlineInput, focusedField === 'ativo' && styles.inputFocused]}>
+          <TouchableOpacity onPress={toggleAtivoOptions}>
             <View style={styles.selectContainer}>
-              <Text>{ativo === 'Sim' ? 'Ativo' : ativo === 'Não' ? 'Sedentário' : 'Ativo (Sim/Não)'}</Text>
-              <Ionicons name="chevron-down" size={24} color="#000" />
+              <Text>{ativo || 'Ativo (Sim/Não)'}</Text>
+              <Ionicons name={ativoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
             </View>
           </TouchableOpacity>
+          {ativoOptionsVisible && (
+            <View style={styles.optionsContainer}>
+              <TouchableOpacity onPress={() => selectAtivoOption('Sim')}>
+                <Text>Ativo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => selectAtivoOption('Não')}>
+                <Text>Sedentário</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleCadastro}>
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{cadastrarError}</Text>
-      
     </View>
   );
 }
@@ -118,6 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#232323',
     width: '100%',
+    paddingTop: 20, // Adiciona um espaçamento no topo
   },
   title: {
     fontSize: 24,
@@ -135,11 +224,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#FFF',
   },
+  inputFocused: {
+    borderColor: '#8A2BE2',
+  },
   inlineInputs: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '80%',
-    marginBottom: 10,
+    marginBottom: 20, // Aumenta o espaçamento vertical
   },
   inlineInput: {
     width: '48%', 
