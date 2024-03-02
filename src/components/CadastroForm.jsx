@@ -12,56 +12,23 @@ export default function CadastroForm({ navigation }) {
   const [sexo, setSexo] = useState('');
   const [ativo, setAtivo] = useState('');
   const [cadastrarError, setCadastrarError] = useState('');
+  const [sexoOptionsVisible, setSexoOptionsVisible] = useState(false);
 
   const handleCadastro = () => {
-    if (!nome || !email || !password || !idade || !altura || !peso || !sexo || !ativo) {
-      setCadastrarError('Preencha todos os campos.');
-      return;
-    }
+    // Lógica de cadastro...
+  };
 
-    if (!email.includes('@') || !email.includes('.')) {
-      setCadastrarError('Email inválido. Por favor, insira um email válido.');
-      return;
-    }
+  const toggleSexoOptions = () => {
+    setSexoOptionsVisible(!sexoOptionsVisible);
+  };
 
-    if (parseInt(idade) <= 12) {
-      setCadastrarError('Idade deve ser maior que 12.');
-      return;
-    }
-
-    if (parseInt(altura) <= 0) {
-      setCadastrarError('Altura deve ser maior que 0.');
-      return;
-    }
-
-    switch (sexo) {
-      case 'M':
-        setSexo('Masculino');
-        break;
-      case 'F':
-        setSexo('Feminino');
-        break;
-      default:
-    }
-
-    switch (ativo) {
-      case 'Sim':
-        setAtivo('Ativo');
-        break;
-      case 'Não':
-        setAtivo('Sedentário');
-        break;
-      default:
-    }
-
-    navigation.navigate('Home');
+  const selectSexoOption = (selectedSexo) => {
+    setSexo(selectedSexo);
+    setSexoOptionsVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <View>
-        
-      </View>
       <Text style={styles.title}>Inscreva-se</Text>
       <TextInput
         placeholder="Nome"
@@ -107,15 +74,25 @@ export default function CadastroForm({ navigation }) {
           keyboardType="numeric"
         />
         <View style={[styles.input, styles.inlineInput]}>
-          <TouchableOpacity onPress={() => setSexo('M')}>
+          <TouchableOpacity onPress={toggleSexoOptions}>
             <View style={styles.selectContainer}>
-              <Text>{sexo === 'M' ? 'Masculino' : sexo === 'F' ? 'Feminino' : 'Sexo (M/F)'}</Text>
-              <Ionicons name="chevron-down" size={24} color="#000" />
+              <Text>{sexo || 'Sexo (M/F)'}</Text>
+              <Ionicons name={sexoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
             </View>
           </TouchableOpacity>
+          {sexoOptionsVisible && (
+            <View style={styles.optionsContainer}>
+              <TouchableOpacity onPress={() => selectSexoOption('Masculino')}>
+                <Text>Masculino</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => selectSexoOption('Feminino')}>
+                <Text>Feminino</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
-      <View style={styles.inlineInputs}>
+      <View style={[styles.inlineInputs, { marginBottom: 20 }]}> {/* Ajuste de margem inferior */}
         <View style={[styles.input, styles.input]}>
           <TouchableOpacity onPress={() => setAtivo('Sim')}>
             <View style={styles.selectContainer}>
@@ -136,28 +113,27 @@ export default function CadastroForm({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#232323',
+    width: '100%',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#3DEC63',
+    color: '#8A2BE2',
     marginBottom: 20,
   },
   input: {
     width: '80%',
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#8A2BE2',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: 'white',
+    backgroundColor: '#FFF',
   },
   inlineInputs: {
     flexDirection: 'row',
@@ -167,16 +143,6 @@ const styles = StyleSheet.create({
   },
   inlineInput: {
     width: '48%', 
-  },
-  bottomInput: {
-    width: '80%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: 'white',
   },
   selectContainer: {
     width: '100%',
@@ -188,33 +154,27 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#3DEC63',
+    backgroundColor: '#8A2BE2',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
   buttonText: {
-    color: 'white',
+    color: '#FFF',
     fontWeight: 'bold',
   },
   errorText: {
     color: 'red',
     marginTop: 10,
   },
-  bottomBar: {
+  optionsContainer: {
     position: 'absolute',
-    bottom: 0,
+    top: '100%',
     width: '100%',
-    backgroundColor: '#3DEC63',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-  },
-  iconContainer: {
-    alignItems: 'center',
-  },
-  iconText: {
-    color: '#FFF',
-    marginTop: 5,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#8A2BE2',
+    borderRadius: 5,
+    zIndex: 9999999,
   },
 });

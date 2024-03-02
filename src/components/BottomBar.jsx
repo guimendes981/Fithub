@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: '#3DEC63',
+    backgroundColor: '#8A2BE2',
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 10,
