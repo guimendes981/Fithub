@@ -8,11 +8,16 @@ export default function TreinoForm() {
   const [repeticoes, setRepeticoes] = useState('');
 
   const handleSalvar = () => {
-    // Lógica para salvar os dados do treino
-    console.log('Exercício:', exercicio);
-    console.log('Peso:', peso);
-    console.log('Séries:', series);
-    console.log('Repetições:', repeticoes);
+    // Criar um objeto contendo os dados do formulário de treino
+    const treinoData = {
+      exercicio: exercicio,
+      peso: peso,
+      series: series,
+      repeticoes: repeticoes,
+    };
+
+    // Fazer um console.log único com os dados do formulário de treino
+    console.log(treinoData);
   };
 
   const handleInputChange = (value, setState) => {
@@ -60,13 +65,13 @@ export default function TreinoForm() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#232323',
-        width: '100%',
-        height: '100%',
-      },
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#232323',
+    width: '100%',
+    height: '100%',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
