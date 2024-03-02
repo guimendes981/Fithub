@@ -201,12 +201,12 @@ export default function CadastroForm({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#232323',
     width: '100%',
-    paddingTop: 20, // Adiciona um espaçamento no topo
+    
   },
   title: {
     fontSize: 24,
