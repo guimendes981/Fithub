@@ -43,24 +43,6 @@ export default function Home({ navigation }) {
         <Text style={styles.quoteText}>{motivationalQuote}</Text>
       </View>
       
-      <View style={styles.additionalContent}>
-        <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
-        <Text style={styles.additionalText}>Beber água regularmente ajuda a manter o corpo hidratado e a pele saudável.</Text>
-      </View>
-
-      {/* Informações de saúde */}
-      <View style={styles.infoContainer}>
-        <View style={styles.infoRow}>
-          <Text style={[styles.infoTitle, {fontSize: 20}]}>Seu IMC:</Text>
-          <Text style={[styles.infoValue, {fontSize: 20}]}>--</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={[styles.infoTitle, {fontSize: 20}]}>Gordura Corporal:</Text>
-          <Text style={[styles.infoValue, {fontSize: 20}]}>--</Text>
-        </View>
-      </View>
-      
-      
       {/* Botões */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Treino')}>
@@ -73,7 +55,13 @@ export default function Home({ navigation }) {
           <Text style={styles.buttonText}>Academias Próximas</Text>
         </TouchableOpacity>
       </View>
-      
+
+      {/* Informações adicionais */}
+      <View style={styles.additionalContent}>
+        <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
+        <Text style={styles.additionalText}>Beber água regularmente ajuda a manter o corpo hidratado e a pele saudável.</Text>
+      </View>
+
     </View>
   );
 }
@@ -104,21 +92,6 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
   },
-  infoContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  infoTitle: {
-    color: '#FFF',
-    marginRight: 10,
-  },
-  infoValue: {
-    color: '#FFF',
-  },
   buttonContainer: {
     alignItems: 'center',
     width: '80%',
@@ -139,18 +112,19 @@ const styles = StyleSheet.create({
   additionalContent: {
     width: '80%',
     alignItems: 'center',
-    marginBottom: '10%',
     borderWidth: 3,
     borderColor: '#8A2BE2',
+    borderRadius: 5,
+    padding: 10,
   },
   additionalTitle: {
     fontSize: 20,
     color: '#8A2BE2',
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   additionalText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#FFF',
     textAlign: 'center',
   },

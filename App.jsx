@@ -1,27 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CadastroForm from './src/components/CadastroForm';
-import BottomBar from './src/components/BottomBar';
-import Home from './src/components/Home';
-import TreinoForm from './src/components/TreinoForm';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './src/navigation/AppNavigator';
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      {/* <Home/> */}
-      {/* <BottomBar /> */}
-      {/* <CadastroForm /> */}
-      <TreinoForm />
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

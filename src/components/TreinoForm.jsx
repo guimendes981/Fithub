@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function TreinoForm() {
+export default function TreinoForm({ navigation }) {
   const [exercicio, setExercicio] = useState('');
   const [peso, setPeso] = useState('');
   const [series, setSeries] = useState('');
@@ -16,8 +16,8 @@ export default function TreinoForm() {
       repeticoes: repeticoes,
     };
 
-    // Fazer um console.log único com os dados do formulário de treino
-    console.log(treinoData);
+    // Navegar para a tela MostrarTreino e passar os dados do treino como parâmetro
+    navigation.navigate('MostrarTreino', treinoData);
   };
 
   const handleInputChange = (value, setState) => {
