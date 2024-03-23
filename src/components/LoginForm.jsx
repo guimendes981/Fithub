@@ -1,11 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function LoginForm({ navigation }) {
+export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const navigation = useNavigation(); // Obter a função de navegação
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -18,7 +20,16 @@ export default function LoginForm({ navigation }) {
       return;
     }
 
+    // Aqui você pode adicionar a lógica de autenticação
+    // Por exemplo, chamar uma função que verifica as credenciais do usuário
+
+    // Após a autenticação bem-sucedida, navegue para a tela Home
     navigation.navigate('Home');
+
+    // Limpar os campos após o login
+    setEmail('');
+    setPassword('');
+    setLoginError('');
   };
 
   return (
@@ -39,7 +50,7 @@ export default function LoginForm({ navigation }) {
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-]      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{loginError}</Text>
@@ -59,11 +70,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3DEC63',
     marginBottom: 20,
-    display: 'flex',
-    marginRight: '70%',
-    marginTop: 10,
-    marginBottom: 5,
-   },
+  },
   input: {
     width: '80%',
     height: 40,

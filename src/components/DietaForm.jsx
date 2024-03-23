@@ -1,44 +1,72 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker, Alert } from 'react-native';
 
 export default function DietaForm() {
+  const [refeicao, setRefeicao] = useState('cafeDaManha');
   const [comida, setComida] = useState('');
-  const [calorias, setCalorias] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [refeicoesSalvas, setRefeicoesSalvas] = useState({});
+  const [error, setError] = useState('');
 
-  const API_ID = '1db24f7c';
-  const API_KEY = '5bd662befc20bce221cab14348be8808';
+  const handleInserir = () => {
+    setError('');
 
-  const handleBuscarCalorias = async () => {
-    try {
-      const response = await fetch(`https://api.edamam.com/api/nutrition-data?app_id=${API_ID}&app_key=${API_KEY}&ingr=${comida}`);
-      const data = await response.json();
-      // Verificar se os dados foram retornados corretamente e se contêm informações de calorias
-      if (data.totalNutrients && data.totalNutrients.ENERC_KCAL) {
-        // Extrair as calorias médias da resposta da API e atualizar o estado
-        setCalorias(data.totalNutrients.ENERC_KCAL.quantity / data.yield);
-      } else {
-        console.error('Erro ao buscar as calorias: Dados da API incompletos.');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar as calorias:', error);
+    if (!comida.trim() || !quantidade.trim()) {
+      setError('Por favor, preencha todos os campos.');
+      return;
     }
+
+    const validQuantidade = /^[0-9]+(?:ml|L|mg|g|kg)$/;
+
+    if (!validQuantidade.test(quantidade)) {
+      setError('A quantidade deve ser um número seguido por "ml", "L", "mg", "g" ou "kg". Exemplo: 250g');
+      return;
+    }
+
+    const novaRefeicao = { comida, quantidade };
+    const refeicoesAtualizadas = { ...refeicoesSalvas, [refeicao]: [...(refeicoesSalvas[refeicao] || []), novaRefeicao] };
+    setRefeicoesSalvas(refeicoesAtualizadas);
+    console.log('Refeições Atualizadas:', refeicoesAtualizadas);
+    // Limpar os campos após inserir
+    setComida('');
+    setQuantidade('');
+  };
+
+  const handleSalvar = () => {
+    console.log('Refeições Salvas:', refeicoesSalvas);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Buscar Calorias</Text>
+      <Text style={styles.title}>Adicionar Refeições</Text>
+      <Picker
+        selectedValue={refeicao}
+        style={styles.input}
+        onValueChange={(itemValue) => setRefeicao(itemValue)}
+      >
+        <Picker.Item label="Café da Manhã" value="cafeDaManha" />
+        <Picker.Item label="Almoço" value="almoco" />
+        <Picker.Item label="Jantar" value="jantar" />
+      </Picker>
       <TextInput
-        placeholder="Comida"
+        placeholder="Nome da Comida"
         style={styles.input}
         onChangeText={(text) => setComida(text)}
         value={comida}
       />
-      <TouchableOpacity style={styles.button} onPress={handleBuscarCalorias}>
-        <Text style={styles.buttonText}>Buscar</Text>
+      <TextInput
+        placeholder="Quantidade (ex: 250g)"
+        style={styles.input}
+        onChangeText={(text) => setQuantidade(text)}
+        value={quantidade}
+      />
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+      <TouchableOpacity style={styles.button} onPress={handleInserir}>
+        <Text style={styles.buttonText}>Inserir</Text>
       </TouchableOpacity>
-      {calorias !== '' && (
-        <Text style={styles.resultText}>Quantidade Média de Calorias: {calorias.toFixed(2)}</Text>
-      )}
+      <TouchableOpacity style={styles.button} onPress={handleSalvar}>
+        <Text style={styles.buttonText}>Salvar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -80,9 +108,8 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
   },
-  resultText: {
-    marginTop: 20,
-    fontSize: 18,
-    color: '#FFF',
+  error: {
+    color: 'red',
+    marginBottom: 10,
   },
 });

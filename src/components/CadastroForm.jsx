@@ -48,6 +48,10 @@ export default function CadastroForm({ navigation }) {
     };
     console.log('Dados do usuário:', userData);
     setCadastrarError('');
+
+
+    navigation.navigate('LoginForm'); // Substitua 'LoginForm' pelo nome correto do componente de login
+
   };
 
   const isValidEmail = (email) => {
@@ -201,7 +205,7 @@ export default function CadastroForm({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#232323',

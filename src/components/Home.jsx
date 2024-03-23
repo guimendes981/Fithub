@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import MinhaDieta from './MinhaDieta';
 
 export default function Home({ navigation }) {
   const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
     "Só existe um êxito: a capacidade de levar a vida que se quer.",
-    "O sucesso é ir de fracasso em fracasso sem perder entusiasmo.",
-    "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
-    "O sucesso não é definitivo, o fracasso não é fatal: é a coragem de continuar que conta.",
-    "O único lugar onde o sucesso vem antes do trabalho é no dicionário.",
-    "No meio da dificuldade encontra-se a oportunidade.",
-    "Imagine uma nova história para sua vida e acredite nela.",
-    "Dificuldades preparam pessoas comuns para destinos extraordinários.",
-    "Nenhum mar em calmaria faz bons marinheiros."
+    "O sucesso é ir de fracasso em fracasso sem perder o entusiasmo.",
+    // Outras citações motivacionais aqui
   ];
 
   const [motivationalQuote, setMotivationalQuote] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     getRandomQuote();
@@ -27,41 +23,56 @@ export default function Home({ navigation }) {
     setMotivationalQuote(motivationalQuotes[randomIndex]);
   };
 
-  const goToProfile = () => {
-    navigation.navigate('Profile');
-  };
-
   return (
     <View style={styles.container}>
-      {/* Ícone de perfil */}
-      <TouchableOpacity onPress={goToProfile} style={styles.profileIcon}>
+      <TouchableOpacity
+        style={styles.profileIcon}
+        onPress={() => navigation.navigate('Profile')}
+      >
         <Ionicons name="person" size={24} color="#8A2BE2" />
       </TouchableOpacity>
       
-      {/* Frase motivacional */}
-      <View style={styles.quoteContainer}>
-        <Text style={styles.quoteText}>{motivationalQuote}</Text>
-      </View>
-      
-      {/* Botões */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Treino')}>
-          <Text style={styles.buttonText}>Seu Treino</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Dieta')}>
-          <Text style={styles.buttonText}>Sua Dieta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Academias')}>
-          <Text style={styles.buttonText}>Academias Próximas</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Informações adicionais */}
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
         <Text style={styles.additionalText}>Beber água regularmente ajuda a manter o corpo hidratado e a pele saudável.</Text>
       </View>
+      
+      <View style={styles.quoteContainer}>
+        <Text style={styles.quoteText}>{motivationalQuote}</Text>
+      </View>
+      
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('TreinoForm')}
+        >
+          <Text style={styles.buttonText}>Seu Treino</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setModalVisible(true)} // Abre o modal ao pressionar
+        >
+          <Text style={styles.buttonText}>Sua Dieta</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Academias')}
+        >
+          <Text style={styles.buttonText}>Academias Próximas</Text>
+        </TouchableOpacity>
+      </View>
 
+      {/* Modal Minha Dieta */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <MinhaDieta onClose={() => setModalVisible(false)} />
+      </Modal>
     </View>
   );
 }
@@ -104,6 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: '100%',
     alignItems: 'center',
+    activeOpacity: 0.8,
   },
   buttonText: {
     color: '#FFF',
@@ -116,6 +128,7 @@ const styles = StyleSheet.create({
     borderColor: '#8A2BE2',
     borderRadius: 5,
     padding: 10,
+    marginBottom: 10,
   },
   additionalTitle: {
     fontSize: 20,
