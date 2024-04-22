@@ -14,13 +14,13 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+          <Stack.Screen name="CadastroForm" component={CadastroForm} options={
+            { headerShown: false }
+          }/>
         <Stack.Screen name="Home" component={Home} options={
           // { title: 'Bem-vindo ao FitManager' }
           { headerShown: false }
           
-        }/>
-        <Stack.Screen name="CadastroForm" component={CadastroForm} options={
-          { headerShown: false }
         }/>
         <Stack.Screen name="LoginForm" component={LoginForm} options={
           // { title: 'Login' }

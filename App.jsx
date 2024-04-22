@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import LoginForm from './src/components/LoginForm';
+import Home from './src/components/Home';
 import Navigation from './src/navigation/Navigation';
-
 export default function App() {
-  return (
-    <Navigation />
-  );
+  const [user, setUser] = useState(null);
+  
+
+  return !user ? <Navigation/> : <LoginForm setUser={setUser} />;
 }

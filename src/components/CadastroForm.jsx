@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { db } from '../services/firebaseConfig';
 
 export default function CadastroForm({ navigation }) {
   const [nome, setNome] = useState('');
@@ -50,7 +51,9 @@ export default function CadastroForm({ navigation }) {
     setCadastrarError('');
 
 
-    navigation.navigate('LoginForm'); // Substitua 'LoginForm' pelo nome correto do componente de login
+
+    db.collection('usuarios').add(userData)
+    // navigation.navigate('LoginForm'); // Substitua 'LoginForm' pelo nome correto do componente de login
 
   };
 

@@ -1,35 +1,57 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../services/firebaseConfig";
 
-export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const navigation = useNavigation(); // Obter a função de navegação
+
+const LoginForm = ({ setUser }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const handleLogin = () => {
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        
+        console.log('====================================');
+        console.log(user);
+        console.log('====================================');
+
+        setUser(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        
+        console.log('====================================');
+        console.log(errorMessage);
+        console.log('====================================');
+      });
+
     if (!email || !password) {
-      setLoginError('Preencha todos os campos.');
+      setLoginError("Preencha todos os campos.");
+
       return;
     }
 
-    if (!email.includes('@') || !email.includes('.')) {
-      setLoginError('Email inválido. Por favor, insira um email válido.');
+    if (!email.includes("@") || !email.includes(".")) {
+      setLoginError("Email inválido. Por favor, insira um email válido.");
       return;
     }
-
-    // Aqui você pode adicionar a lógica de autenticação
-    // Por exemplo, chamar uma função que verifica as credenciais do usuário
-
-    // Após a autenticação bem-sucedida, navegue para a tela Home
-    navigation.navigate('Home');
-
     // Limpar os campos após o login
-    setEmail('');
-    setPassword('');
-    setLoginError('');
+    setEmail("");
+    setPassword("");
+    setLoginError("");
   };
 
   return (
@@ -56,46 +78,48 @@ export default function LoginForm() {
       <Text style={styles.errorText}>{loginError}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#232323',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#232323",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3DEC63',
+    fontWeight: "bold",
+    color: "#3DEC63",
     marginBottom: 20,
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   errorText: {
-    color: 'red',
+    color: "red",
     marginTop: 10,
   },
   button: {
-    width: '80%',
+    width: "80%",
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#3DEC63',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#3DEC63",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
+
+export default LoginForm;
