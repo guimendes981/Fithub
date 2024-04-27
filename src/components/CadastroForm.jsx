@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { db } from '../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from "../services/firebaseConfig";
+import { addDoc, collection } from 'firebase/firestore';
+
 
 export default function CadastroForm({ navigation }) {
   const [nome, setNome] = useState('');
@@ -35,26 +39,35 @@ export default function CadastroForm({ navigation }) {
       setCadastrarError('Peso deve conter apenas números');
       return;
     }
-
+  
     // Dados válidos, prossegue com o cadastro
-    const userData = {
-      nome,
-      email,
-      password,
-      idade,
-      altura,
-      peso,
-      sexo,
-      ativo,
-    };
-    console.log('Dados do usuário:', userData);
-    setCadastrarError('');
-
-
-
-    db.collection('usuarios').add(userData)
-    // navigation.navigate('LoginForm'); // Substitua 'LoginForm' pelo nome correto do componente de login
-
+    createUserWithEmailAndPassword(auth, email, password)
+    .then(async (userCredential) => {
+      try {
+        const docRef = await addDoc(collection(db, "users"), {
+          nome,
+          email,
+          password,
+          idade: parseInt(idade),
+          altura: parseFloat(altura),
+          peso: parseInt(peso),
+          sexo,
+          ativo: ativo === 'Sim' ? true : false,
+        });
+        
+        console.log("Document written with ID: ", docRef.id);
+        
+        navigation.navigate('LoginForm'); // Substitua 'LoginForm' pelo nome correto do componente de login
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        setCadastrarError('Erro ao cadastrar usuário');
+      }
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setCadastrarError(errorMessage);
+    });
   };
 
   const isValidEmail = (email) => {
