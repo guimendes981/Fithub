@@ -65,7 +65,7 @@ export default function CadastroForm({ navigation }) {
             ativo: ativo === "Sim" ? true : false,
             horario,
             nivel,
-            diaSemana,
+            selectedDiasSemana,
             objetivo,
             treinou,
           });
@@ -131,7 +131,7 @@ export default function CadastroForm({ navigation }) {
 
   const handleDiaSemanaSelection = (dia) => {
     if (selectedDiasSemana.includes(dia)) {
-      setSelectedDiasSemana(selectedDiasSemana.filter(item => item !== dia));
+      setSelectedDiasSemana(selectedDiasSemana.filter((item) => item !== dia));
     } else {
       setSelectedDiasSemana([...selectedDiasSemana, dia]);
     }
@@ -260,7 +260,6 @@ export default function CadastroForm({ navigation }) {
         )}
       </View>
 
-
       <Text style={styles.label}>Em qual horário pretende treinar?</Text>
       <TextInput
         placeholder="Horário"
@@ -274,8 +273,7 @@ export default function CadastroForm({ navigation }) {
         value={horario}
       />
 
-
-<Text style={styles.label}>Qual é o seu nível de treino?</Text>
+      <Text style={styles.label}>Qual é o seu nível de treino?</Text>
       <TextInput
         placeholder="Nível"
         style={[styles.input, focusedField === "nivel" && styles.inputFocused]}
@@ -285,60 +283,110 @@ export default function CadastroForm({ navigation }) {
         value={nivel}
       />
 
-
- <Text style={styles.label}>Selecione os dias da semana que irá treinar</Text>
+      <Text style={styles.label}>
+        Selecione os dias da semana que irá treinar
+      </Text>
       <View style={styles.selectContainer}>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Segunda')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Segunda")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Segunda') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Segunda")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Segunda</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Terça')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Terça")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Terça') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Terça")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Terça</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Quarta')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Quarta")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Quarta') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Quarta")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Quarta</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Quinta')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Quinta")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Quinta') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Quinta")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Quinta</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Sexta')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Sexta")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Sexta') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Sexta")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Sexta</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Sábado')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Sábado")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Sábado') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Sábado")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
           <Text style={styles.radioText}>Sábado</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.radioButton} onPress={() => handleDiaSemanaSelection('Domingo')}>
+        <TouchableOpacity
+          style={styles.radioButton}
+          onPress={() => handleDiaSemanaSelection("Domingo")}
+        >
           <Ionicons
-            name={selectedDiasSemana.includes('Domingo') ? 'radio-button-on' : 'radio-button-off'}
+            name={
+              selectedDiasSemana.includes("Domingo")
+                ? "radio-button-on"
+                : "radio-button-off"
+            }
             size={24}
             color="#FFF"
           />
@@ -415,20 +463,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   selectContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
   radioButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: 20,
     marginBottom: 10,
   },
   radioText: {
     fontSize: 16,
-    color: '#FFF',
+    color: "#FFF",
     marginLeft: 5,
   },
   optionsContainer: {

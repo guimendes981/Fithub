@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MinhaDieta from './MinhaDieta';
+import { auth } from '../services/firebaseConfig'; 
+
 
 export default function Home({ navigation }) {
   const motivationalQuotes = [
@@ -13,6 +15,7 @@ export default function Home({ navigation }) {
 
   const [motivationalQuote, setMotivationalQuote] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   useEffect(() => {
     getRandomQuote();
@@ -23,14 +26,33 @@ export default function Home({ navigation }) {
     setMotivationalQuote(motivationalQuotes[randomIndex]);
   };
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut(); // Desloga o usuário
+      navigation.navigate('LoginForm'); // Redireciona para a tela de login após o logout
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error.message);
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.profileIcon}
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
       >
         <Ionicons name="person" size={24} color="#8A2BE2" />
       </TouchableOpacity>
+
+      {/* Menu Suspenso */}
+      {dropdownVisible && (
+        <View style={styles.dropdown}>
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={styles.dropdownOption}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
@@ -140,5 +162,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFF',
     textAlign: 'center',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: 40, // Ajuste conforme necessário
+    right: 10,
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#8A2BE2',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    zIndex: 1, // Para ficar na frente de outros elementos
+  },
+  dropdownOption: {
+    fontSize: 16,
+    color: '#000',
+    paddingVertical: 5,
   },
 });
