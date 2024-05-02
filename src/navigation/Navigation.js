@@ -15,10 +15,10 @@ export default function Navigation() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        // Usuário logado, defina a tela inicial como Home
+        // Usuário logado
         setInitialRouteName('Home');
       } else {
-        // Usuário não logado, defina a tela inicial como LoginForm
+        // Usuário não logado
         setInitialRouteName('LoginForm');
       }
     });

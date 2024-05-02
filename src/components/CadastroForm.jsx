@@ -72,7 +72,7 @@ export default function CadastroForm({ navigation }) {
 
           console.log("Document written with ID: ", docRef.id);
 
-          navigation.navigate("LoginForm"); // Substitua 'LoginForm' pelo nome correto do componente de login
+          navigation.navigate("LoginForm"); 
         } catch (error) {
           console.error("Error adding document: ", error);
           setCadastrarError("Erro ao cadastrar usuário");
