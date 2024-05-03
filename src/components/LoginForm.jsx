@@ -7,31 +7,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 
-
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ setUser, navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
   const handleLogin = () => {
-
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        // ...
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        setLoginError(errorMessage);
+      });
 
     if (!email || !password) {
       setLoginError("Preencha todos os campos.");
-
       return;
     }
 
@@ -39,6 +36,7 @@ const LoginForm = ({ setUser }) => {
       setLoginError("Email inválido. Por favor, insira um email válido.");
       return;
     }
+
     // Limpar os campos após o login
     setEmail("");
     setPassword("");
@@ -47,26 +45,34 @@ const LoginForm = ({ setUser }) => {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="person-outline" size={90} color="#3DEC63" />
+      <Ionicons name="person-outline" size={90} color="#8A2BE2" />
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        onChangeText={(text) => setEmail(text)}
-        value={email}
-      />
-      <Text style={styles.title}>Senha</Text>
-      <TextInput
-        placeholder="Senha"
-        style={styles.input}
-        secureTextEntry
-        onChangeText={(text) => setPassword(text)}
-        value={password}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Senha</Text>
+        <TextInput
+          placeholder="Senha"
+          style={styles.input}
+          secureTextEntry
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+        />
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{loginError}</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('CadastroForm')}>
+        <Text style={styles.linkText}>Cadastrar-se</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -81,16 +87,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#3DEC63",
+    color: "#8A2BE2",
     marginBottom: 20,
   },
-  input: {
+  inputContainer: {
     width: "80%",
+    marginBottom: 10,
+  },
+  label: {
+    color: "#8A2BE2",
+    marginBottom: 5,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  input: {
+    width: "100%",
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: "white",
   },
@@ -102,7 +117,7 @@ const styles = StyleSheet.create({
     width: "80%",
     height: 40,
     borderRadius: 5,
-    backgroundColor: "#3DEC63",
+    backgroundColor: "#8A2BE2",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
@@ -110,6 +125,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  linkText: {
+    color: "#8A2BE2",
+    marginTop: 20,
+    textDecorationLine: "underline",
   },
 });
 

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { db } from '../services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from "../services/firebaseConfig";
+import { auth, db } from '../services/firebaseConfig';
 import { addDoc, collection } from 'firebase/firestore';
-
 
 export default function CadastroForm({ navigation }) {
   const [nome, setNome] = useState('');
@@ -115,7 +113,7 @@ export default function CadastroForm({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Inscreva-se</Text>
       <TextInput
         placeholder="Nome"
@@ -142,91 +140,84 @@ export default function CadastroForm({ navigation }) {
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-      <View style={styles.inlineInputs}>
-        <TextInput
-          placeholder="Idade"
-          style={[styles.input, styles.inlineInput, focusedField === 'idade' && styles.inputFocused]}
-          onFocus={() => setFocusedField('idade')}
-          onBlur={() => setFocusedField('')}
-          onChangeText={handleIdadeChange}
-          value={idade}
-          keyboardType="numeric"
-        />
-        <TextInput
-          placeholder="Altura (cm)"
-          style={[styles.input, styles.inlineInput, focusedField === 'altura' && styles.inputFocused]}
-          onFocus={() => setFocusedField('altura')}
-          onBlur={() => setFocusedField('')}
-          onChangeText={handleAlturaChange}
-          value={altura}
-          keyboardType="numeric"
-        />
+      <TextInput
+        placeholder="Idade"
+        style={[styles.input, focusedField === 'idade' && styles.inputFocused]}
+        onFocus={() => setFocusedField('idade')}
+        onBlur={() => setFocusedField('')}
+        onChangeText={handleIdadeChange}
+        value={idade}
+        keyboardType="numeric"
+      />
+      <TextInput
+        placeholder="Altura (cm)"
+        style={[styles.input, focusedField === 'altura' && styles.inputFocused]}
+        onFocus={() => setFocusedField('altura')}
+        onBlur={() => setFocusedField('')}
+        onChangeText={handleAlturaChange}
+        value={altura}
+        keyboardType="numeric"
+      />
+      <TextInput
+        placeholder="Peso"
+        style={[styles.input, focusedField === 'peso' && styles.inputFocused]}
+        onFocus={() => setFocusedField('peso')}
+        onBlur={() => setFocusedField('')}
+        onChangeText={handlePesoChange}
+        value={peso}
+        keyboardType="numeric"
+      />
+      <View style={[styles.input, focusedField === 'sexo' && styles.inputFocused]}>
+        <TouchableOpacity onPress={toggleSexoOptions}>
+          <View style={styles.selectContainer}>
+            <Text>{sexo || 'Sexo (M/F)'}</Text>
+            <Ionicons name={sexoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
+          </View>
+        </TouchableOpacity>
+        {sexoOptionsVisible && (
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity onPress={() => selectSexoOption('Masculino')}>
+              <Text>Masculino</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => selectSexoOption('Feminino')}>
+              <Text>Feminino</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <View style={styles.inlineInputs}>
-        <TextInput
-          placeholder="Peso"
-          style={[styles.input, styles.inlineInput, focusedField === 'peso' && styles.inputFocused]}
-          onFocus={() => setFocusedField('peso')}
-          onBlur={() => setFocusedField('')}
-          onChangeText={handlePesoChange}
-          value={peso}
-          keyboardType="numeric"
-        />
-        <View style={[styles.input, styles.inlineInput, focusedField === 'sexo' && styles.inputFocused]}>
-          <TouchableOpacity onPress={toggleSexoOptions}>
-            <View style={styles.selectContainer}>
-              <Text>{sexo || 'Sexo (M/F)'}</Text>
-              <Ionicons name={sexoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
-            </View>
-          </TouchableOpacity>
-          {sexoOptionsVisible && (
-            <View style={styles.optionsContainer}>
-              <TouchableOpacity onPress={() => selectSexoOption('Masculino')}>
-                <Text>Masculino</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => selectSexoOption('Feminino')}>
-                <Text>Feminino</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </View>
-      <View style={styles.inlineInputs}>
-        <View style={[styles.input, styles.inlineInput, focusedField === 'ativo' && styles.inputFocused]}>
-          <TouchableOpacity onPress={toggleAtivoOptions}>
-            <View style={styles.selectContainer}>
-              <Text>{ativo || 'Ativo (Sim/Não)'}</Text>
-              <Ionicons name={ativoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
-            </View>
-          </TouchableOpacity>
-          {ativoOptionsVisible && (
-            <View style={styles.optionsContainer}>
-              <TouchableOpacity onPress={() => selectAtivoOption('Sim')}>
-                <Text>Ativo</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => selectAtivoOption('Não')}>
-                <Text>Sedentário</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+      <View style={[styles.input, focusedField === 'ativo' && styles.inputFocused]}>
+        <TouchableOpacity onPress={toggleAtivoOptions}>
+          <View style={styles.selectContainer}>
+            <Text>{ativo || 'Ativo (Sim/Não)'}</Text>
+            <Ionicons name={ativoOptionsVisible ? 'chevron-up' : 'chevron-down'} size={24} color="#000" />
+          </View>
+        </TouchableOpacity>
+        {ativoOptionsVisible && (
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity onPress={() => selectAtivoOption('Sim')}>
+              <Text>Ativo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => selectAtivoOption('Não')}>
+              <Text>Sedentário</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <TouchableOpacity style={styles.button} onPress={handleCadastro}>
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
       <Text style={styles.errorText}>{cadastrarError}</Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#232323',
-    width: '100%',
-    
+    paddingVertical: 20,
   },
   title: {
     fontSize: 24,
@@ -247,21 +238,6 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: '#8A2BE2',
   },
-  inlineInputs: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginBottom: 20, // Aumenta o espaçamento vertical
-  },
-  inlineInput: {
-    width: '48%', 
-  },
-  selectContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   button: {
     width: '80%',
     height: 40,
@@ -278,6 +254,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
+  },
+  selectContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   optionsContainer: {
     position: 'absolute',
