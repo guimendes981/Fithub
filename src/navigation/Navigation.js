@@ -9,16 +9,14 @@ import { auth } from '../services/firebaseConfig';
 
 const Stack = createStackNavigator();
 
-export default function Navigation() {
-  const [initialRouteName, setInitialRouteName] = useState('Home');
-
+export default function Navigation({ user, updateUser }) {
+  const [initialRouteName, setInitialRouteName] = useState('LoginForm');
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        // Usuário logado
+    const unsubscribe = auth.onAuthStateChanged((userData) => {
+      if (userData) {
         setInitialRouteName('Home');
+        updateUser(userData); // Atualize o estado do usuário quando estiver autenticado
       } else {
-        // Usuário não logado
         setInitialRouteName('LoginForm');
       }
     });
@@ -33,6 +31,7 @@ export default function Navigation() {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
+          initialParams={{ updateUser }} // Passe a função updateUser para o componente Home
         />
         <Stack.Screen
           name="LoginForm"
@@ -44,11 +43,21 @@ export default function Navigation() {
           component={CadastroForm}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="MinhaDieta"
           component={MinhaDieta}
           options={{ headerShown: false }}
-        /> */}
+        />
+        <Stack.Screen
+          name="Navigation"
+          component={Navigation}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TreinoForm"
+          component={Home}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -41,7 +41,10 @@ const LoginForm = ({ navigation }) => {
       // Armazene os dados do usuário em algum estado ou contexto global
       // Por exemplo, em um estado do componente ou em um contexto global usando useContext/useReducer
       setUser(userData); // Defina setUser como a função para atualizar o estado do usuário
-      navigation.navigate("TreinoForm");
+
+      setLoading(false);
+      console.log("Usuário autenticado:", user);
+      navigation.navigate("Home");
     })
     .catch((error) => {
       const errorMessage = error.message;
