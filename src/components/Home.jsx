@@ -17,46 +17,61 @@ export default function Home({ navigation }) {
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     getRandomQuote();
+    fetchUserData(); // Chama a função para recuperar os dados do usuário ao montar o componente
   }, []);
+
+  
 
   const getRandomQuote = () => {
     const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
     setMotivationalQuote(motivationalQuotes[randomIndex]);
   };
 
-  const user = auth.currentUser;
-  if (user) {
-    const userName = user.displayName;
-    console.log("Nome do usuário:", userName);
-
-    // Obtenha os dados do usuário do Firestore
-    const userDoc = doc(db, "users", user.uid);
-    getDoc(userDoc)
-      .then((doc) => {
-        if (doc.exists()) {
-          console.log("Dados do usuário:", doc.data());
-        } else {
-          console.log("Nenhum dado encontrado para este usuário.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao obter dados do usuário:", error.message);
-      });
+  const usuario = auth.currentUser;
 
 
+  //get usuario data from firestore
 
-  } else {
-    console.log("Usuário não autenticado");
+  const fetchUserData = async () => {
+    try {
+      const usuario = auth.currentUser; // Obter o usuário atual
+      if (usuario) {
+        const userData = await getUserData(usuario.uid); // Passar o uid do usuário
+        setUser(userData); // Atualizar o estado do usuário
+      }
+    } catch (error) {
+      console.error("Erro ao obter dados do usuário:", error.message);
+    }
+  };
+
+
+async function getUserData(userId) {
+  try {
+    console.log(`Fetching user with ID: ${userId}`); // Log the user ID
+    const docRef = doc(db, "users", userId);
+    console.log(`Document path: ${docRef.path}`); // Log the document path
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data(); // Return the user data
+    } else {
+      console.log("No such document!");
+      return null; // Return null if no document is found
+    }
+  } catch (error) {
+    console.error("Error fetching user data: ", error);
+    throw error; // Re-throw the error to ensure it's caught by any calling function
   }
+}
 
   const handleLogout = async () => {
     try {
       await auth.signOut(); // Desloga o usuário
       // navigation.navigate("LoginForm"); // Redireciona para a tela de login após o logout
-      navigation.navigate("LoginForm"); // Redireciona para a tela de login após o logout
+      navigation.navigate("CadastroForm"); // Redireciona para a tela de login após o logout
     } catch (error) {
       console.error("Erro ao fazer logout:", error.message);
     }
@@ -80,7 +95,7 @@ export default function Home({ navigation }) {
         </View>
       )}
 
-      <Text style={styles.title}>Bem-vindo {user.displayName} !</Text>
+      <Text style={styles.title}>Bem-vindo {usuario.displayName} !</Text>
 
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>

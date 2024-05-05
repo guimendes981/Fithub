@@ -17,6 +17,7 @@ const LoginForm = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const handleLogin = () => {
     if (!email || !password) {
