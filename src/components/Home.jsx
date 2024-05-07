@@ -113,7 +113,7 @@ onAuthStateChanged(auth, (user) => {
         </View>
       )}
 
-      <Text style={styles.title}>Bem-vindo {user && user.nome} !</Text>
+      <Text style={styles.title}>Bem-vindo {user && user.idade} !</Text>
 
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
