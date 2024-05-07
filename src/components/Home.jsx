@@ -65,8 +65,12 @@ onAuthStateChanged(auth, (user) => {
 
         onSnapshot(collection(db, "users"), (snapshot) => {
           snapshot.forEach((doc) => {
+            if(usuario.uid === doc.data().uid){
             console.log(doc.id, "=>", doc.data());
-          });
+
+            setUser(doc.data());
+            
+        }});
         });
       }
     } catch (error) {
