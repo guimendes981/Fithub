@@ -71,6 +71,7 @@ export default function CadastroForm({ navigation }) {
 
           // Adicionar outros dados ao Firestore
           const docRef = await addDoc(collection(db, "users"), {
+            uid: userCredential.user.uid,
             nome,
             email,
             password,

@@ -12,6 +12,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
+
 const LoginForm = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,24 +34,24 @@ const LoginForm = ({ navigation }) => {
     setLoading(true);
 
     signInWithEmailAndPassword(auth, email, password)
-    .then(async (userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      // Obtenha os dados do usuário do Firestore
-      const userDoc = await doc(db, "users", user.uid);
-      const userData = (await getDoc(userDoc)).data();
-      // Armazene os dados do usuário em algum estado ou contexto global
-      // Por exemplo, em um estado do componente ou em um contexto global usando useContext/useReducer
-      setUser(userData); // Defina setUser como a função para atualizar o estado do usuário
+      .then(async (userCredential) => {
+        // Autenticado com sucesso
+        const user = userCredential.user;
+        // Obter os dados do usuário do Firestore
+        const userDoc = doc(db, "users", user.uid);
+        const userData = (await getDoc(userDoc)).data();
+        // Armazenar os dados do usuário em algum estado ou contexto global
+        setUser(userData); // Definir setUser como a função para atualizar o estado do usuário
 
-      setLoading(false);
-      console.log("Usuário autenticado:", user);
-      navigation.navigate("Home");
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      setLoginError(errorMessage);
-    });
+        setLoading(false);
+        console.log("Usuário autenticado:", user);
+        navigation.navigate("Home");
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        setLoginError(errorMessage);
+        setLoading(false);
+      });
   };
 
   const isValidEmail = (email) => {

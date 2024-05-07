@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../components/Home';
-import LoginForm from '../components/LoginForm';
-import CadastroForm from '../components/CadastroForm';
-import MinhaDieta from '../components/MinhaDieta';
-import { auth } from '../services/firebaseConfig';
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Home from "../components/Home";
+import LoginForm from "../components/LoginForm";
+import CadastroForm from "../components/CadastroForm";
+import MinhaDieta from "../components/MinhaDieta";
+import { auth } from "../services/firebaseConfig";
 
 const Stack = createStackNavigator();
 
 export default function Navigation({ user, updateUser }) {
-  const [initialRouteName, setInitialRouteName] = useState('LoginForm');
+  const [initialRouteName, setInitialRouteName] = useState("LoginForm");
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((userData) => {
       if (userData) {
-        setInitialRouteName('Home');
+        setInitialRouteName("Home");
         updateUser(userData); // Atualize o estado do usuário quando estiver autenticado
       } else {
-        setInitialRouteName('LoginForm');
+        setInitialRouteName("LoginForm");
       }
     });
 
@@ -31,7 +31,7 @@ export default function Navigation({ user, updateUser }) {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
-          initialParams={{ updateUser }} // Passe a função updateUser para o componente Home
+          initialParams={{ user, updateUser }} // Pass both user and updateUser to the Home component
         />
         <Stack.Screen
           name="LoginForm"

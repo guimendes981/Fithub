@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import MinhaDieta from "./MinhaDieta";
 import { auth, db } from "../services/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
-import Navigation from "../navigation/Navigation";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import MinhaDieta from "./MinhaDieta";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function Home({ navigation }) {
   const motivationalQuotes = [
@@ -24,54 +24,68 @@ export default function Home({ navigation }) {
     fetchUserData(); // Chama a função para recuperar os dados do usuário ao montar o componente
   }, []);
 
-  
-
   const getRandomQuote = () => {
     const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
     setMotivationalQuote(motivationalQuotes[randomIndex]);
   };
 
-  const usuario = auth.currentUser;
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    const email = user.email;
+    const displayName = user.displayName;
+    const photoURL = user.photoURL;
+    const peso = user.peso;
+    console.log("Usuário logado:", uid);
 
-
-  //get usuario data from firestore
+  } else {
+    // User is signed out
+    console.log("Usuário deslogado");
+  }
+});
 
   const fetchUserData = async () => {
     try {
       const usuario = auth.currentUser; // Obter o usuário atual
       if (usuario) {
-        const userData = await getUserData(usuario.uid); // Passar o uid do usuário
-        setUser(userData); // Atualizar o estado do usuário
+        // const docRef = doc(db, "users", usuario.uid);
+        // const docSnap = await getDoc(docRef);
+
+        // console.log("Dados do usuário:", docSnap);
+
+        // if (docSnap.exists()) {
+        //   setUser(docSnap.data());
+        // } else {
+        //   console.log("No such document!");
+        // }
+
+
+        onSnapshot(collection(db, "users"), (snapshot) => {
+          snapshot.forEach((doc) => {
+            console.log(doc.id, "=>", doc.data());
+          });
+        });
       }
     } catch (error) {
       console.error("Erro ao obter dados do usuário:", error.message);
     }
+
+//     import { collection, getDocs } from "firebase/firestore"; 
+
+// const querySnapshot = await getDocs(collection(db, "users"));
+// querySnapshot.forEach((doc) => {
+//   console.log(`${doc.id} => ${doc.data()}`);
+// });
   };
-
-
-async function getUserData(userId) {
-  try {
-    console.log(`Fetching user with ID: ${userId}`); // Log the user ID
-    const docRef = doc(db, "users", userId);
-    console.log(`Document path: ${docRef.path}`); // Log the document path
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data(); // Return the user data
-    } else {
-      console.log("No such document!");
-      return null; // Return null if no document is found
-    }
-  } catch (error) {
-    console.error("Error fetching user data: ", error);
-    throw error; // Re-throw the error to ensure it's caught by any calling function
-  }
-}
 
   const handleLogout = async () => {
     try {
       await auth.signOut(); // Desloga o usuário
-      // navigation.navigate("LoginForm"); // Redireciona para a tela de login após o logout
-      navigation.navigate("CadastroForm"); // Redireciona para a tela de login após o logout
+      navigation.navigate("LoginForm"); // Redireciona para a tela de login após o logout
+      console.log("Usuário deslogado com sucesso!");
     } catch (error) {
       console.error("Erro ao fazer logout:", error.message);
     }
@@ -95,7 +109,7 @@ async function getUserData(userId) {
         </View>
       )}
 
-      <Text style={styles.title}>Bem-vindo {usuario.displayName} !</Text>
+      <Text style={styles.title}>Bem-vindo {user && user.nome} !</Text>
 
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
