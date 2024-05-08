@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { collection, addDoc, deleteDoc, doc } from "firebase/firestore"; 
+import { collection, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"; 
 import { auth, db } from "../services/firebaseConfig";
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Picker } from '@react-native-picker/picker';
+
 
 export default function TreinoForm() {
   const [nome, setNome] = useState('');
@@ -13,18 +15,87 @@ export default function TreinoForm() {
   const [repeticoes, setRepeticoes] = useState('');
   const [treinos, setTreinos] = useState([]); 
 
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const usuario = auth.currentUser; // Obter o usuário atual
+      if (usuario) {
+        // const docRef = doc(db, "users", usuario.uid);
+        // const docSnap = await getDoc(docRef);
+
+        // console.log("Dados do usuário:", docSnap);
+
+        // if (docSnap.exists()) {
+        //   setUser(docSnap.data());
+        // } else {
+        //   console.log("No such document!");
+        // }
+
+
+        onSnapshot(collection(db, "treinos"), (snapshot) => {
+          snapshot.forEach((doc) => {
+            if(usuario.uid === doc.data().userId){
+            console.log(doc.id, "=>", doc.data());
+              
+            setTreinos([...treinos, { id: doc.id, ...doc.data() }]);
+        }});
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao obter dados do usuário:", error.message);
+    }
+
+//     import { collection, getDocs } from "firebase/firestore"; 
+
+// const querySnapshot = await getDocs(collection(db, "users"));
+// querySnapshot.forEach((doc) => {
+//   console.log(`${doc.id} => ${doc.data()}`);
+// });
+  };
+  const Selection = ({ selectedValue, setSelectedValue }) => (
+    <Picker
+      style={styles.picker}
+      selectedValue={selectedValue}
+      onValueChange={(itemValue) => setSelectedValue(itemValue)}
+    >
+      <Picker.Item label="Triceps" value="Triceps" />
+      <Picker.Item label="Biceps" value="Biceps" />
+      <Picker.Item label="Costas" value="Costas" />
+      <Picker.Item label="Pernas" value="Pernas" />
+      <Picker.Item label="Peito" value="Peito" />
+      <Picker.Item label="Abdomen" value="Abdomen" />
+    </Picker>
+  );
+
   const handleSalvar = async () => {
     // Criar um objeto contendo os dados do formulário de treino
     const treinoData = {
+      userId: user.uid,
       nome: nome,
-      exercicio: exercicio,
-      peso: peso,
-      series: series,
-      repeticoes: repeticoes,
+      exercicios: [
+        {
+          nome: exercicio,
+          peso: peso,
+          series: series,
+          repeticoes: repeticoes,
+        },
+      ],
+      // exercicio: exercicio,
+      // peso: peso,
+      // series: series,
+      // repeticoes: repeticoes,
     };
   
     // Add the training data to Firestore
     const treinoDocRef = await addDoc(collection(db, "treinos"), treinoData);
+
+    //update the user's treino colelction
+    const userDocRef = doc(db, "users", user.uid);
+    await addDoc(collection(userDocRef, "treinos"), { id: treinoDocRef.id, ...treinoData });
   
     console.log("Training document written with ID: ", treinoDocRef.id);
   
@@ -39,6 +110,13 @@ export default function TreinoForm() {
     setRepeticoes('');
   };
 
+  console.log('====================================');
+  console.log('Treinos:', treinos);
+  console.log('====================================');
+
+  const allExercises = treinos.flatMap(treino => treino.exercicios);
+
+
   const handleDelete = async (id) => {
     // Delete the training document from Firestore
     await deleteDoc(doc(db, "treinos", id));
@@ -52,11 +130,9 @@ export default function TreinoForm() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Adicionar Exercício</Text>
-      <TextInput
-        placeholder="Nome do Treino"
-        style={styles.input}
-        onChangeText={(text) => setNome(text)}
-        value={nome}
+      <Selection 
+        selectedValue={nome}
+        setSelectedValue={setNome}
       />
       <TextInput
         placeholder="Nome do Exercício"
@@ -90,12 +166,12 @@ export default function TreinoForm() {
       </TouchableOpacity>
       <Animatable.View animation="fadeIn" duration={2000} style={styles.treinoItem}>
         <FlatList
-          data={treinos}
-          keyExtractor={(item, index) => index.toString()}
+          data={allExercises}
+          // keyExtractor={( item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.treinoItem}>
               <View style={styles.treinoInfo}>
-                <Text>Exercício: {item.exercicio}</Text>
+                <Text>Exercício: {item.nome}</Text>
                 <Text>Peso: {item.peso}</Text>
                 <Text>Séries: {item.series}</Text>
                 <Text>Repetições: {item.repeticoes}</Text>
@@ -117,6 +193,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#232323',
     width: '100%',
     height: '100%',
+  },
+  picker: {
+    width: '80%',
+    height: 40,
+    borderColor: '#8A2BE2',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: '#FFF',
   },
   title: {
     fontSize: 24,
@@ -148,6 +234,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   treinoItem: {
+    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

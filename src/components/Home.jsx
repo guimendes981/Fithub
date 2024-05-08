@@ -113,7 +113,7 @@ onAuthStateChanged(auth, (user) => {
         </View>
       )}
 
-      <Text style={styles.title}>Bem-vindo {user && user.idade} !</Text>
+      <Text style={styles.title}>Bem-vindo {user && user.nome} !</Text>
 
       <View style={styles.additionalContent}>
         <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
@@ -130,7 +130,9 @@ onAuthStateChanged(auth, (user) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("TreinoForm")}
+          onPress={() => 
+            navigation.navigate("TreinoForm", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          }
         >
           <Text style={styles.buttonText}>Seu Treino</Text>
         </TouchableOpacity>

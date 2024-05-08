@@ -5,6 +5,7 @@ import Home from "../components/Home";
 import LoginForm from "../components/LoginForm";
 import CadastroForm from "../components/CadastroForm";
 import MinhaDieta from "../components/MinhaDieta";
+import TreinoForm from "../components/TreinoForm";
 import { auth } from "../services/firebaseConfig";
 
 const Stack = createStackNavigator();
@@ -55,7 +56,7 @@ export default function Navigation({ user, updateUser }) {
         />
         <Stack.Screen
           name="TreinoForm"
-          component={Home}
+          component={TreinoForm}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
