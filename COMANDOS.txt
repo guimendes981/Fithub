@@ -1,15 +1,10 @@
-1) npm i -> instala tudo
 
-2) npx expo start -> inicia o projeto
+TODA A VEZ QUE ABRIR O PROJETO FAZ ISSO
 
-3) a - para abrir no android
+1 - git pull
+2 - npm i
+3 - npx expo start
+4 - a - para abrir no android
    i - para abrir no ios
-   w - para abrir no web
+   w - para abrir no web (ESTOU USANDO ESSE PRA ABRIR NO NAVEGADOR)
    q - para sair
-
-4) TODA VEZ QUE FOR ABRIR A PASTA TEM QUE DAR git pull PARA ATUALIZAR O REPOSITÓRIO
-
-5) CRIAR UMA BRANCH PARA CADA TAREFA QUE FOR FAZER
-
-6) git checkout -b nomeDaBranch -> cria uma branch e já muda para ela
-
