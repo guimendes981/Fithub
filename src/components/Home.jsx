@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ImageBackground } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../services/firebaseConfig";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
@@ -18,6 +18,8 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [user, setUser] = useState(null);
+  const [treinos, setTreinos] = useState([]);
+
 
   useEffect(() => {
     getRandomQuote();
@@ -40,6 +42,7 @@ onAuthStateChanged(auth, (user) => {
     const photoURL = user.photoURL;
     const peso = user.peso;
     console.log("Usuário logado:", uid);
+
 
   } else {
     // User is signed out
@@ -72,6 +75,17 @@ onAuthStateChanged(auth, (user) => {
             
         }});
         });
+
+        onSnapshot(collection(db, "treinos"), (snapshot) => {
+          const newTreinos = [];
+          snapshot.forEach((doc) => {
+            if (usuario.uid === doc.data().userId) {
+              console.log(doc.id, "=>", doc.data());
+              newTreinos.push({ id: doc.id, ...doc.data() });
+            }
+          });
+          setTreinos(newTreinos);
+        });
       }
     } catch (error) {
       console.error("Erro ao obter dados do usuário:", error.message);
@@ -96,12 +110,12 @@ onAuthStateChanged(auth, (user) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={require('../images/background1.jpg')} style={styles.container}>
       <TouchableOpacity
         style={styles.profileIcon}
         onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
       >
-        <Ionicons name="person" size={24} color="#8A2BE2" />
+        <Ionicons name="person" size={24} color="#FFF" />
       </TouchableOpacity>
 
       {/* Menu Suspenso */}
@@ -115,41 +129,28 @@ onAuthStateChanged(auth, (user) => {
 
       <Text style={styles.title}>Bem-vindo {user && user.nome} !</Text>
 
-      <View style={styles.additionalContent}>
-        <Text style={styles.additionalTitle}>Dicas Rápidas:</Text>
-        <Text style={styles.additionalText}>
-          Beber água regularmente ajuda a manter o corpo hidratado e a pele
-          saudável.
-        </Text>
-      </View>
-
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{motivationalQuote}</Text>
       </View>
 
       <View style={styles.buttonContainer}>
+        
+      <TouchableOpacity
+          style={styles.button}
+          onPress={() => setModalVisible(true)} // Abre o modal ao pressionar
+        >
+          <Text style={styles.buttonText}>Seu treino de hoje</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.button}
           onPress={() => 
             navigation.navigate("TreinoForm", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
           }
         >
-          <Text style={styles.buttonText}>Seu Treino</Text>
+          <Text style={styles.buttonText}>Adicionar treino</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setModalVisible(true)} // Abre o modal ao pressionar
-        >
-          <Text style={styles.buttonText}>Sua Dieta</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Academias")}
-        >
-          <Text style={styles.buttonText}>Academias Próximas</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Modal Minha Dieta */}
@@ -161,7 +162,7 @@ onAuthStateChanged(auth, (user) => {
       >
         <MinhaDieta onClose={() => setModalVisible(false)} />
       </Modal>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -171,12 +172,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#232323",
     alignItems: "center",
     justifyContent: "center",
+    width: '100%',
+    height: '100%'
   },
   title: {
-    fontSize: 25,
-    color: "#8A2BE2",
+    fontSize: 30,
+    color: "#FFF",
     fontWeight: "bold",
     marginBottom: "20%",
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10
   },
   profileIcon: {
     position: "absolute",
@@ -184,9 +190,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   quoteContainer: {
-    backgroundColor: "#232323",
-    borderWidth: 3,
-    borderColor: "#8A2BE2",
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 5,
     width: "80%",
     marginBottom: 20,
@@ -214,26 +218,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFF",
     fontWeight: "bold",
-  },
-  additionalContent: {
-    width: "80%",
-    alignItems: "center",
-    borderWidth: 3,
-    borderColor: "#8A2BE2",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  additionalTitle: {
-    fontSize: 20,
-    color: "#8A2BE2",
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  additionalText: {
-    fontSize: 16,
-    color: "#FFF",
-    textAlign: "center",
   },
   dropdown: {
     position: "absolute",

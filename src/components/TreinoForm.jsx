@@ -1,20 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { collection, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"; 
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from "react-native";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 import { auth, db } from "../services/firebaseConfig";
-import * as Animatable from 'react-native-animatable';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Picker } from '@react-native-picker/picker';
-
+import * as Animatable from "react-native-animatable";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Picker } from "@react-native-picker/picker";
+import Home from "./Home";
 
 export default function TreinoForm() {
-  const [nome, setNome] = useState('');
-  const [exercicio, setExercicio] = useState('');
-  const [peso, setPeso] = useState('');
-  const [series, setSeries] = useState('');
-  const [repeticoes, setRepeticoes] = useState('');
-  const [treinos, setTreinos] = useState([]); 
-
+  const [nome, setNome] = useState("");
+  const [exercicio, setExercicio] = useState("");
+  const [peso, setPeso] = useState("");
+  const [series, setSeries] = useState("");
+  const [repeticoes, setRepeticoes] = useState("");
+  const [treinos, setTreinos] = useState([]);
 
   useEffect(() => {
     fetchUserData();
@@ -35,27 +47,28 @@ export default function TreinoForm() {
         //   console.log("No such document!");
         // }
 
-
         onSnapshot(collection(db, "treinos"), (snapshot) => {
+          const newTreinos = [];
           snapshot.forEach((doc) => {
-            if(usuario.uid === doc.data().userId){
-            console.log(doc.id, "=>", doc.data());
-              
-            setTreinos([...treinos, { id: doc.id, ...doc.data() }]);
-        }});
+            if (usuario.uid === doc.data().userId) {
+              console.log(doc.id, "=>", doc.data());
+              newTreinos.push({ id: doc.id, ...doc.data() });
+            }
+          });
+          setTreinos(newTreinos);
         });
       }
     } catch (error) {
       console.error("Erro ao obter dados do usuário:", error.message);
     }
-
-//     import { collection, getDocs } from "firebase/firestore"; 
-
-// const querySnapshot = await getDocs(collection(db, "users"));
-// querySnapshot.forEach((doc) => {
-//   console.log(`${doc.id} => ${doc.data()}`);
-// });
   };
+
+  //     import { collection, getDocs } from "firebase/firestore";
+
+  // const querySnapshot = await getDocs(collection(db, "users"));
+  // querySnapshot.forEach((doc) => {
+  //   console.log(`${doc.id} => ${doc.data()}`);
+  // });
   const Selection = ({ selectedValue, setSelectedValue }) => (
     <Picker
       style={styles.picker}
@@ -89,51 +102,57 @@ export default function TreinoForm() {
       // series: series,
       // repeticoes: repeticoes,
     };
-  
+
     // Add the training data to Firestore
     const treinoDocRef = await addDoc(collection(db, "treinos"), treinoData);
 
     //update the user's treino colelction
     const userDocRef = doc(db, "users", user.uid);
-    await addDoc(collection(userDocRef, "treinos"), { id: treinoDocRef.id, ...treinoData });
-  
+    await addDoc(collection(userDocRef, "treinos"), {
+      id: treinoDocRef.id,
+      ...treinoData,
+    });
+
     console.log("Training document written with ID: ", treinoDocRef.id);
-  
+
     // Adicionar o novo treino ao array de treinos com the document ID
     setTreinos([...treinos, { id: treinoDocRef.id, ...treinoData }]);
-  
+
     // Limpar o formulário
-    setNome('');
-    setExercicio('');
-    setPeso('');
-    setSeries('');
-    setRepeticoes('');
+    setNome("");
+    setExercicio("");
+    setPeso("");
+    setSeries("");
+    setRepeticoes("");
   };
 
-  console.log('====================================');
-  console.log('Treinos:', treinos);
-  console.log('====================================');
+  console.log("====================================");
+  console.log("Treinos:", treinos);
+  console.log("====================================");
 
-  const allExercises = treinos.flatMap(treino => treino.exercicios);
-
+  const allExercises = treinos.flatMap((treino) => treino.exercicios);
 
   const handleDelete = async (id) => {
     // Delete the training document from Firestore
     await deleteDoc(doc(db, "treinos", id));
 
     // Remove the training from the local state
-    setTreinos(treinos.filter(treino => treino.id !== id));
+    setTreinos(treinos.filter((treino) => treino.id !== id));
 
     console.log("Training document deleted with ID: ", id);
   };
 
   return (
     <View style={styles.container}>
+       <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={() => navigation.navigate(Home)}
+      >
+        <Icon name="arrow-left" size={30} color="#900" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Adicionar Exercício</Text>
-      <Selection 
-        selectedValue={nome}
-        setSelectedValue={setNome}
-      />
+      <Selection selectedValue={nome} setSelectedValue={setNome} />
       <TextInput
         placeholder="Nome do Exercício"
         style={styles.input}
@@ -164,7 +183,11 @@ export default function TreinoForm() {
       <TouchableOpacity style={styles.button} onPress={handleSalvar}>
         <Text style={styles.buttonText}>Salvar</Text>
       </TouchableOpacity>
-      <Animatable.View animation="fadeIn" duration={2000} style={styles.treinoItem}>
+      <Animatable.View
+        animation="fadeIn"
+        duration={2000}
+        // style={styles.treinoItem}
+      >
         <FlatList
           data={allExercises}
           // keyExtractor={( item, index) => index.toString()}
@@ -176,7 +199,10 @@ export default function TreinoForm() {
                 <Text>Séries: {item.series}</Text>
                 <Text>Repetições: {item.repeticoes}</Text>
               </View>
-              <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteIcon}>
+              <TouchableOpacity
+                onPress={() => handleDelete(item.id)}
+                style={styles.deleteIcon}
+              >
                 <Icon name="trash" size={30} color="#900" />
               </TouchableOpacity>
             </View>
@@ -188,57 +214,62 @@ export default function TreinoForm() {
 }
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#232323',
-    width: '100%',
-    height: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#232323",
+    width: "100%",
+    height: "100%",
+  },
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   picker: {
-    width: '80%',
+    width: "80%",
     height: 40,
-    borderColor: '#8A2BE2',
+    borderColor: "#8A2BE2",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#8A2BE2',
+    fontWeight: "bold",
+    color: "#8A2BE2",
     marginBottom: 20,
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 40,
-    borderColor: '#8A2BE2',
+    borderColor: "#8A2BE2",
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
   },
   button: {
-    width: '80%',
+    width: "80%",
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#8A2BE2',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#8A2BE2",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
+    color: "#FFF",
+    fontWeight: "bold",
   },
   treinoItem: {
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFF",
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
