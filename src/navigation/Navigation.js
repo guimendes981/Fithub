@@ -3,9 +3,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "../components/Home";
 import LoginForm from "../components/LoginForm";
+import ExerciseList from "../components/Biblioteca";
 import CadastroForm from "../components/CadastroForm";
 import MinhaDieta from "../components/MinhaDieta";
 import TreinoForm from "../components/TreinoForm";
+import TreinoList from "../components/TreinoList";
 import { auth } from "../services/firebaseConfig";
 
 const Stack = createStackNavigator();
@@ -47,6 +49,11 @@ export default function Navigation({ user, updateUser }) {
         <Stack.Screen
           name="MinhaDieta"
           component={MinhaDieta}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TreinoList"
+          component={TreinoList}
           options={{ headerShown: false }}
         />
         <Stack.Screen

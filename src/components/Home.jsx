@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ImageBackground } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  ImageBackground,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../services/firebaseConfig";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
@@ -20,7 +27,6 @@ export default function Home({ navigation }) {
   const [user, setUser] = useState(null);
   const [treinos, setTreinos] = useState([]);
 
-
   useEffect(() => {
     getRandomQuote();
     fetchUserData(); // Chama a função para recuperar os dados do usuário ao montar o componente
@@ -31,24 +37,22 @@ export default function Home({ navigation }) {
     setMotivationalQuote(motivationalQuotes[randomIndex]);
   };
 
-const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user
-    const uid = user.uid;
-    const email = user.email;
-    const displayName = user.displayName;
-    const photoURL = user.photoURL;
-    const peso = user.peso;
-    console.log("Usuário logado:", uid);
-
-
-  } else {
-    // User is signed out
-    console.log("Usuário deslogado");
-  }
-});
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/auth.user
+      const uid = user.uid;
+      const email = user.email;
+      const displayName = user.displayName;
+      const photoURL = user.photoURL;
+      const peso = user.peso;
+      console.log("Usuário logado:", uid);
+    } else {
+      // User is signed out
+      console.log("Usuário deslogado");
+    }
+  });
 
   const fetchUserData = async () => {
     try {
@@ -65,15 +69,14 @@ onAuthStateChanged(auth, (user) => {
         //   console.log("No such document!");
         // }
 
-
         onSnapshot(collection(db, "users"), (snapshot) => {
           snapshot.forEach((doc) => {
-            if(usuario.uid === doc.data().uid){
-            console.log(doc.id, "=>", doc.data());
+            if (usuario.uid === doc.data().uid) {
+              console.log(doc.id, "=>", doc.data());
 
-            setUser(doc.data());
-            
-        }});
+              setUser(doc.data());
+            }
+          });
         });
 
         onSnapshot(collection(db, "treinos"), (snapshot) => {
@@ -91,12 +94,12 @@ onAuthStateChanged(auth, (user) => {
       console.error("Erro ao obter dados do usuário:", error.message);
     }
 
-//     import { collection, getDocs } from "firebase/firestore"; 
+    //     import { collection, getDocs } from "firebase/firestore";
 
-// const querySnapshot = await getDocs(collection(db, "users"));
-// querySnapshot.forEach((doc) => {
-//   console.log(`${doc.id} => ${doc.data()}`);
-// });
+    // const querySnapshot = await getDocs(collection(db, "users"));
+    // querySnapshot.forEach((doc) => {
+    //   console.log(`${doc.id} => ${doc.data()}`);
+    // });
   };
 
   const handleLogout = async () => {
@@ -110,7 +113,10 @@ onAuthStateChanged(auth, (user) => {
   };
 
   return (
-    <ImageBackground source={require('../images/background1.jpg')} style={styles.container}>
+    <ImageBackground
+      source={require("../images/background1.jpg")}
+      style={styles.container}
+    >
       <TouchableOpacity
         style={styles.profileIcon}
         onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
@@ -134,23 +140,37 @@ onAuthStateChanged(auth, (user) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        
-      <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={() => setModalVisible(true)} // Abre o modal ao pressionar
         >
           <Text style={styles.buttonText}>Seu treino de hoje</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => 
-            navigation.navigate("TreinoForm", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          onPress={
+            () => navigation.navigate("TreinoList", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
           }
         >
           <Text style={styles.buttonText}>Adicionar treino</Text>
         </TouchableOpacity>
-
+        <TouchableOpacity
+          style={styles.button}
+          onPress={
+            () => navigation.navigate("TreinoForm", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          }
+        >
+          <Text style={styles.buttonText}>Adicionar treino</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          // onPress={() =>
+          //   // navigation.navigate("ExerciseList", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          // }
+        >
+          <Text style={styles.buttonText}>Biblioteca de exercícios</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Modal Minha Dieta */}
@@ -172,17 +192,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#232323",
     alignItems: "center",
     justifyContent: "center",
-    width: '100%',
-    height: '100%'
+    width: "100%",
+    height: "100%",
   },
   title: {
     fontSize: 30,
     color: "#FFF",
     fontWeight: "bold",
     marginBottom: "20%",
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 10
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   profileIcon: {
     position: "absolute",

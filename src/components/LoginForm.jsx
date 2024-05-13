@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -59,8 +60,10 @@ const LoginForm = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Ionicons name="person-outline" size={90} color="#8A2BE2" />
+    <ImageBackground
+    source={require("../images/background1.jpg")}
+    style={styles.container}
+  >      <Ionicons name="person-outline" size={90} color="#8A2BE2" />
       <Text style={styles.title}>Login</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
@@ -96,7 +99,7 @@ const LoginForm = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
         <Text style={styles.linkText}>Cadastrar-se</Text>
       </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 };
 

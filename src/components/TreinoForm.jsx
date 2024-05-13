@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  ImageBackground,
 } from "react-native";
 import {
   collection,
@@ -133,18 +134,22 @@ export default function TreinoForm() {
   const allExercises = treinos.flatMap((treino) => treino.exercicios);
 
   const handleDelete = async (id) => {
-    // Delete the training document from Firestore
-    await deleteDoc(doc(db, "treinos", id));
-
-    // Remove the training from the local state
-    setTreinos(treinos.filter((treino) => treino.id !== id));
-
-    console.log("Training document deleted with ID: ", id);
+    const treinoRef = doc(db, 'treinos', id);
+  
+    try {
+      await deleteDoc(treinoRef);
+      console.log(`Treino with id ${id} has been deleted.`);
+    } catch (e) {
+      console.error('Error deleting treino: ', e);
+    }
   };
 
   return (
-    <View style={styles.container}>
-       <TouchableOpacity 
+    <ImageBackground
+    source={require("../images/background1.jpg")}
+    style={styles.container}
+  >
+           <TouchableOpacity 
         style={styles.backButton} 
         onPress={() => navigation.navigate(Home)}
       >
@@ -209,7 +214,7 @@ export default function TreinoForm() {
           )}
         />
       </Animatable.View>
-    </View>
+    </ImageBackground>
   );
 }
 const styles = StyleSheet.create({
