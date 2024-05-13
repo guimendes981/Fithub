@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Modal,
   ImageBackground,
+  Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../services/firebaseConfig";
@@ -26,10 +27,17 @@ export default function Home({ navigation }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [user, setUser] = useState(null);
   const [treinos, setTreinos] = useState([]);
+  const [fadeAnim, setFadeAnim] = useState(new Animated.Value(0)); // Valor inicial: transparente
 
   useEffect(() => {
     getRandomQuote();
     fetchUserData(); // Chama a função para recuperar os dados do usuário ao montar o componente
+
+    Animated.timing(fadeAnim, {
+      toValue: 1, // Valor final: totalmente visível
+      duration: 2000, // Duração da animação em milissegundos
+      useNativeDriver: true, // Use o driver nativo, se disponível
+    }).start();
   }, []);
 
   const getRandomQuote = () => {
@@ -130,10 +138,15 @@ export default function Home({ navigation }) {
           <TouchableOpacity onPress={handleLogout}>
             <Text style={styles.dropdownOption}>Logout</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <Text style={styles.dropdownOption}>Perfil</Text>
+          </TouchableOpacity>
         </View>
       )}
 
-      <Text style={styles.title}>Bem-vindo {user && user.nome} !</Text>
+      <Animated.Text style={{ ...styles.title, opacity: fadeAnim }}>
+        Bem-vindo {user && user.nome} !
+      </Animated.Text>
 
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{motivationalQuote}</Text>
@@ -153,7 +166,7 @@ export default function Home({ navigation }) {
             () => navigation.navigate("TreinoList", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
           }
         >
-          <Text style={styles.buttonText}>Adicionar treino</Text>
+          <Text style={styles.buttonText}>Seus treinos</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}

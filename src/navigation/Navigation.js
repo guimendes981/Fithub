@@ -8,6 +8,7 @@ import CadastroForm from "../components/CadastroForm";
 import MinhaDieta from "../components/MinhaDieta";
 import TreinoForm from "../components/TreinoForm";
 import TreinoList from "../components/TreinoList";
+import UserProfile from "../components/Profile";
 import { auth } from "../services/firebaseConfig";
 
 const Stack = createStackNavigator();
@@ -54,6 +55,11 @@ export default function Navigation({ user, updateUser }) {
         <Stack.Screen
           name="TreinoList"
           component={TreinoList}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={UserProfile}
           options={{ headerShown: false }}
         />
         <Stack.Screen
