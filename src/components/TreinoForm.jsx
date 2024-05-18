@@ -21,7 +21,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Picker } from "@react-native-picker/picker";
 import Home from "./Home";
 
-export default function TreinoForm() {
+export default function TreinoForm(user) {
   const [nome, setNome] = useState("");
   const [exercicio, setExercicio] = useState("");
   const [peso, setPeso] = useState("");
@@ -85,8 +85,9 @@ export default function TreinoForm() {
     </Picker>
   );
 
-  const handleSalvar = async () => {
+  const handleSalvar = async (usuario) => {
     // Criar um objeto contendo os dados do formulário de treino
+    const user = auth.currentUser;
     const treinoData = {
       userId: user.uid,
       nome: nome,
@@ -151,7 +152,7 @@ export default function TreinoForm() {
   >
            <TouchableOpacity 
         style={styles.backButton} 
-        onPress={() => navigation.navigate(Home)}
+        onPress={() => navigation.navigate("Home")}
       >
         <Icon name="arrow-left" size={30} color="#900" />
       </TouchableOpacity>

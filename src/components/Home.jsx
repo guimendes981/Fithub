@@ -14,6 +14,7 @@ import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import MinhaDieta from "./MinhaDieta";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
+
 export default function Home({ navigation }) {
   const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
@@ -148,6 +149,22 @@ export default function Home({ navigation }) {
         Bem-vindo {user && user.nome} !
       </Animated.Text>
 
+      <div
+      style={{ height: '200px', width: '80%', marginBottom: '20px'}}
+      dangerouslySetInnerHTML={{
+        __html: `
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/ZtpTOTi2jqo"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        `
+      }}
+    />
+
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{motivationalQuote}</Text>
       </View>
@@ -178,9 +195,9 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          // onPress={() =>
-          //   // navigation.navigate("ExerciseList", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
-          // }
+          onPress={() =>
+            navigation.navigate("Biblioteca", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          }
         >
           <Text style={styles.buttonText}>Biblioteca de exercícios</Text>
         </TouchableOpacity>

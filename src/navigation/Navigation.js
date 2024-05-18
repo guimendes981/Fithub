@@ -8,6 +8,7 @@ import CadastroForm from "../components/CadastroForm";
 import MinhaDieta from "../components/MinhaDieta";
 import TreinoForm from "../components/TreinoForm";
 import TreinoList from "../components/TreinoList";
+import Biblioteca from "../components/Biblioteca";
 import UserProfile from "../components/Profile";
 import { auth } from "../services/firebaseConfig";
 
@@ -65,6 +66,11 @@ export default function Navigation({ user, updateUser }) {
         <Stack.Screen
           name="Navigation"
           component={Navigation}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Biblioteca"
+          component={Biblioteca}
           options={{ headerShown: false }}
         />
         <Stack.Screen
