@@ -12,6 +12,7 @@ import {
   collection,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc,
   onSnapshot,
 } from "firebase/firestore";
@@ -85,48 +86,56 @@ export default function TreinoForm(user) {
     </Picker>
   );
 
-  const handleSalvar = async (usuario) => {
-    // Criar um objeto contendo os dados do formulário de treino
+  const handleSalvar = async () => {
     const user = auth.currentUser;
-    const treinoData = {
-      userId: user.uid,
-      nome: nome,
-      exercicios: [
-        {
-          nome: exercicio,
-          peso: peso,
-          series: series,
-          repeticoes: repeticoes,
-        },
-      ],
-      // exercicio: exercicio,
-      // peso: peso,
-      // series: series,
-      // repeticoes: repeticoes,
+    const novoExercicio = {
+      nome: exercicio,
+      peso: peso,
+      series: series,
+      repeticoes: repeticoes,
     };
-
-    // Add the training data to Firestore
-    const treinoDocRef = await addDoc(collection(db, "treinos"), treinoData);
-
-    //update the user's treino colelction
-    const userDocRef = doc(db, "users", user.uid);
-    await addDoc(collection(userDocRef, "treinos"), {
-      id: treinoDocRef.id,
-      ...treinoData,
-    });
-
-    console.log("Training document written with ID: ", treinoDocRef.id);
-
-    // Adicionar o novo treino ao array de treinos com the document ID
-    setTreinos([...treinos, { id: treinoDocRef.id, ...treinoData }]);
-
-    // Limpar o formulário
+  
+    const treinoExistente = treinos.find((treino) => treino.nome === nome);
+  
+    if (treinoExistente) {
+      // Adiciona o novo exercício ao treino existente
+      const atualizadoTreinos = treinos.map((treino) => {
+        if (treino.nome === nome) {
+          return {
+            ...treino,
+            exercicios: [...treino.exercicios, novoExercicio],
+          };
+        }
+        return treino;
+      });
+  
+      setTreinos(atualizadoTreinos);
+  
+      // Atualize o Firestore
+      const treinoDocRef = doc(db, "treinos", treinoExistente.id);
+      await updateDoc(treinoDocRef, {
+        exercicios: [...treinoExistente.exercicios, novoExercicio],
+      });
+    } else {
+      // Cria um novo treino
+      const novoTreino = {
+        userId: user.uid,
+        nome: nome,
+        exercicios: [novoExercicio],
+      };
+  
+      const treinoDocRef = await addDoc(collection(db, "treinos"), novoTreino);
+  
+      setTreinos([...treinos, { id: treinoDocRef.id, ...novoTreino }]);
+    }
+  
     setNome("");
     setExercicio("");
     setPeso("");
     setSeries("");
     setRepeticoes("");
   };
+  
 
   console.log("====================================");
   console.log("Treinos:", treinos);
