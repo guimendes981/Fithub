@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 import {
   collection,
@@ -38,17 +39,6 @@ export default function TreinoForm(user) {
     try {
       const usuario = auth.currentUser; // Obter o usuário atual
       if (usuario) {
-        // const docRef = doc(db, "users", usuario.uid);
-        // const docSnap = await getDoc(docRef);
-
-        // console.log("Dados do usuário:", docSnap);
-
-        // if (docSnap.exists()) {
-        //   setUser(docSnap.data());
-        // } else {
-        //   console.log("No such document!");
-        // }
-
         onSnapshot(collection(db, "treinos"), (snapshot) => {
           const newTreinos = [];
           snapshot.forEach((doc) => {
@@ -64,13 +54,6 @@ export default function TreinoForm(user) {
       console.error("Erro ao obter dados do usuário:", error.message);
     }
   };
-
-  //     import { collection, getDocs } from "firebase/firestore";
-
-  // const querySnapshot = await getDocs(collection(db, "users"));
-  // querySnapshot.forEach((doc) => {
-  //   console.log(`${doc.id} => ${doc.data()}`);
-  // });
   const Selection = ({ selectedValue, setSelectedValue }) => (
     <Picker
       style={styles.picker}
@@ -94,9 +77,9 @@ export default function TreinoForm(user) {
       series: series,
       repeticoes: repeticoes,
     };
-  
+
     const treinoExistente = treinos.find((treino) => treino.nome === nome);
-  
+
     if (treinoExistente) {
       // Adiciona o novo exercício ao treino existente
       const atualizadoTreinos = treinos.map((treino) => {
@@ -108,9 +91,9 @@ export default function TreinoForm(user) {
         }
         return treino;
       });
-  
+
       setTreinos(atualizadoTreinos);
-  
+
       // Atualize o Firestore
       const treinoDocRef = doc(db, "treinos", treinoExistente.id);
       await updateDoc(treinoDocRef, {
@@ -123,120 +106,122 @@ export default function TreinoForm(user) {
         nome: nome,
         exercicios: [novoExercicio],
       };
-  
+
       const treinoDocRef = await addDoc(collection(db, "treinos"), novoTreino);
-  
+
       setTreinos([...treinos, { id: treinoDocRef.id, ...novoTreino }]);
     }
-  
+
     setNome("");
     setExercicio("");
     setPeso("");
     setSeries("");
     setRepeticoes("");
   };
-  
-
-  console.log("====================================");
-  console.log("Treinos:", treinos);
-  console.log("====================================");
 
   const allExercises = treinos.flatMap((treino) => treino.exercicios);
 
   const handleDelete = async (id) => {
-    const treinoRef = doc(db, 'treinos', id);
-  
+    const treinoRef = doc(db, "treinos", id);
+
     try {
       await deleteDoc(treinoRef);
       console.log(`Treino with id ${id} has been deleted.`);
     } catch (e) {
-      console.error('Error deleting treino: ', e);
+      console.error("Error deleting treino: ", e);
     }
   };
 
   return (
-    <ImageBackground
-    source={require("../images/background1.jpg")}
-    style={styles.container}
-  >
-           <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={() => navigation.navigate("Home")}
-      >
-        <Icon name="arrow-left" size={30} color="#900" />
-      </TouchableOpacity>
+    <>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Icon name="arrow-left" size={30} color="#900" />
+        </TouchableOpacity>
 
-      <Text style={styles.title}>Adicionar Exercício</Text>
-      <Selection selectedValue={nome} setSelectedValue={setNome} />
-      <TextInput
-        placeholder="Nome do Exercício"
-        style={styles.input}
-        onChangeText={(text) => setExercicio(text)}
-        value={exercicio}
-      />
-      <TextInput
-        placeholder="Peso (kg)"
-        style={styles.input}
-        onChangeText={(text) => setPeso(text)}
-        value={peso}
-        keyboardType="numeric"
-      />
-      <TextInput
-        placeholder="Séries"
-        style={styles.input}
-        onChangeText={(text) => setSeries(text)}
-        value={series}
-        keyboardType="numeric"
-      />
-      <TextInput
-        placeholder="Repetições"
-        style={styles.input}
-        onChangeText={(text) => setRepeticoes(text)}
-        value={repeticoes}
-        keyboardType="numeric"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSalvar}>
-        <Text style={styles.buttonText}>Salvar</Text>
-      </TouchableOpacity>
-      <Animatable.View
-        animation="fadeIn"
-        duration={2000}
-        // style={styles.treinoItem}
-      >
+      <Text style={styles.title}>
+        Adicionar Exercício
+      </Text>
+
+
+        <Selection selectedValue={nome} setSelectedValue={setNome} />
+        <TextInput
+          placeholder="Nome do Exercício"
+          style={styles.input}
+          onChangeText={(text) => setExercicio(text)}
+          value={exercicio}
+        />
+        <TextInput
+          placeholder="Peso (kg)"
+          style={styles.input}
+          onChangeText={(text) => setPeso(text)}
+          value={peso}
+          keyboardType="numeric"
+        />
+        <TextInput
+          placeholder="Séries"
+          style={styles.input}
+          onChangeText={(text) => setSeries(text)}
+          value={series}
+          keyboardType="numeric"
+        />
+        <TextInput
+          placeholder="Repetições"
+          style={styles.input}
+          onChangeText={(text) => setRepeticoes(text)}
+          value={repeticoes}
+          keyboardType="numeric"
+        />
+        <TouchableOpacity style={styles.button} onPress={handleSalvar}>
+          <Text style={styles.buttonText}>Salvar</Text>
+        </TouchableOpacity>
+
         <FlatList
           data={allExercises}
-          // keyExtractor={( item, index) => index.toString()}
+          ListHeaderComponent={
+            <>
+              <Text style={styles.title2}>Seus Exercícios</Text>
+            </>
+          }
           renderItem={({ item }) => (
-            <View style={styles.treinoItem}>
-              <View style={styles.treinoInfo}>
-                <Text>Exercício: {item.nome}</Text>
-                <Text>Peso: {item.peso}</Text>
-                <Text>Séries: {item.series}</Text>
-                <Text>Repetições: {item.repeticoes}</Text>
+            <ScrollView>
+              <View style={styles.card}>
+                <Text style={styles.cardText}>Nome: {item.nome}</Text>
+                <Text style={styles.cardText}>Peso: {item.peso}</Text>
+                <Text style={styles.cardText}>Séries: {item.series}</Text>
+                <Text style={styles.cardText}>
+                  Repetições: {item.repeticoes}
+                </Text>
+                <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                  <Icon
+                    name="trash"
+                    size={20}
+                    color="#900"
+                    style={styles.deleteIcon}
+                  />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={() => handleDelete(item.id)}
-                style={styles.deleteIcon}
-              >
-                <Icon name="trash" size={30} color="#900" />
-              </TouchableOpacity>
-            </View>
+            </ScrollView>
           )}
+          keyExtractor={(item) => item.id}
         />
-      </Animatable.View>
-    </ImageBackground>
+      </View>
+    </>
   );
 }
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#232323",
     width: "100%",
-    height: "100%",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
   },
@@ -247,6 +232,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
+    marginTop: 10,
     paddingHorizontal: 10,
     backgroundColor: "#FFF",
   },
@@ -255,6 +241,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#8A2BE2",
     marginBottom: 20,
+    marginTop: 60,
+  },
+  title2: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#8A2BE2",
+    marginTop: 30,
   },
   input: {
     width: "80%",
@@ -294,5 +287,21 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     marginLeft: 10,
+  },
+  card: {
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignSelf: "center",
+    width: "80%",
+  },
+  cardText: {
+    marginBottom: 10,
   },
 });

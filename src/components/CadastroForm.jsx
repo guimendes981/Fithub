@@ -32,7 +32,6 @@ export default function CadastroForm({ navigation }) {
   const [focusedField, setFocusedField] = useState("");
 
   const handleCadastro = () => {
-    // Verificações dos campos
     if (!isValidEmail(email)) {
       setCadastrarError("Email inválido");
       return;
@@ -50,11 +49,9 @@ export default function CadastroForm({ navigation }) {
       return;
     }
 
-    // Dados válidos, prossegue com o cadastro
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         try {
-          // Adicionar informações ao perfil do usuário
           await updateProfile(auth.currentUser, {
             displayName: nome,
             idade: idade,
@@ -69,7 +66,6 @@ export default function CadastroForm({ navigation }) {
             treinou: treinou,
           });
 
-          // Adicionar outros dados ao Firestore
           const docRef = await addDoc(collection(db, "users"), {
             uid: userCredential.user.uid,
             nome,
@@ -111,12 +107,12 @@ export default function CadastroForm({ navigation }) {
 
   const toggleSexoOptions = () => {
     setSexoOptionsVisible(!sexoOptionsVisible);
-    setAtivoOptionsVisible(false); // Fechar opções de ativo se estiverem abertas
+    setAtivoOptionsVisible(false); 
   };
 
   const toggleAtivoOptions = () => {
     setAtivoOptionsVisible(!ativoOptionsVisible);
-    setSexoOptionsVisible(false); // Fechar opções de sexo se estiverem abertas
+    setSexoOptionsVisible(false);
   };
 
   const selectSexoOption = (selectedSexo) => {

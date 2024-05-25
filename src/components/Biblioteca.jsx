@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
+import { WebView } from 'react-native-webview';
+
 
 const exercises = [
   { name: "Agachamento", videoId: "ddCEZHpVqqc" },
@@ -33,30 +35,29 @@ export default function ExerciseList() {
     <View style={styles.container}>
       <Text style={styles.title}>Biblioteca de Exercícios</Text>
       <FlatList
-        data={exercises}
-        keyExtractor={(item) => item.videoId}
-        renderItem={({ item }) => (
-          <View style={styles.exerciseItem}>
-            <Text style={styles.exerciseName}>{item.name}</Text>
-            <div
-              style={{ height: "300px", width: "100%" }}
-              dangerouslySetInnerHTML={{
-                __html: `
+  data={exercises}
+  keyExtractor={(item) => item.videoId}
+  renderItem={({ item }) => (
+    <View style={styles.exerciseItem}>
+      <Text style={styles.exerciseName}>{item.name}</Text>
+      <WebView
+        style={{ height: 300, width: '100%' }}
+        source={{
+          html: `
             <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/${item.videoId}"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/${item.videoId}"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
             ></iframe>
-            
-        `,
-              }}
-            />
-          </View>
-        )}
+          `,
+        }}
       />
+    </View>
+  )}
+/>
     </View>
   );
 }

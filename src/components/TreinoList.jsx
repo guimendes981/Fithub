@@ -80,15 +80,24 @@ export default function TreinoList() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {selectedTreino &&
-                selectedTreino.exercicios.map((exercicio, index) => (
-                  <View key={index} style={styles.exercicioItem}>
-                    <Text style={styles.text}>Exercício: {exercicio.nome}</Text>
-                    <Text style={styles.text}>Peso: {exercicio.peso}</Text>
-                    <Text style={styles.text}>Repetições: {exercicio.repeticoes}</Text>
-                    <Text style={styles.text}>Séries: {exercicio.series}</Text>
-                  </View>
-                ))}
+            <View style={styles.modalView}>
+  {selectedTreino ? (
+    selectedTreino.exercicios ? (
+      selectedTreino.exercicios.map((exercicio, index) => (
+        <View key={index} style={styles.exercicioItem}>
+          <Text style={styles.text}>Exercício: {exercicio.nome}</Text>
+          <Text style={styles.text}>Peso: {exercicio.peso}</Text>
+          <Text style={styles.text}>Repetições: {exercicio.repeticoes}</Text>
+          <Text style={styles.text}>Séries: {exercicio.series}</Text>
+        </View>
+      ))
+    ) : (
+      <Text style={styles.text}>Nenhum exercício encontrado</Text>
+    )
+  ) : (
+    <Text style={styles.text}>Nenhum treino selecionado</Text>
+  )}
+</View>
               <TouchableOpacity
                 style={{ ...styles.button, backgroundColor: "#8A2BE2" }}
                 onPress={() => {

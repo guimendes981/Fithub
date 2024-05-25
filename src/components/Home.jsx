@@ -8,19 +8,20 @@ import {
   ImageBackground,
   Animated,
 } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { WebView } from "react-native-webview";
 import { Ionicons } from "@expo/vector-icons";
+import Navbar from './NavBar'; // Importe o componente
 import { auth, db } from "../services/firebaseConfig";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import MinhaDieta from "./MinhaDieta";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 
 export default function Home({ navigation }) {
   const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
     "Só existe um êxito: a capacidade de levar a vida que se quer.",
     "O sucesso é ir de fracasso em fracasso sem perder o entusiasmo.",
-    // Outras citações motivacionais aqui
   ];
 
   const [motivationalQuote, setMotivationalQuote] = useState("");
@@ -28,7 +29,7 @@ export default function Home({ navigation }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [user, setUser] = useState(null);
   const [treinos, setTreinos] = useState([]);
-  const [fadeAnim, setFadeAnim] = useState(new Animated.Value(0)); // Valor inicial: transparente
+  const [fadeAnim, setFadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     getRandomQuote();
@@ -130,7 +131,7 @@ export default function Home({ navigation }) {
         style={styles.profileIcon}
         onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
       >
-        <Ionicons name="person" size={24} color="#FFF" />
+        <FontAwesome name="user" size={24} color="#FFF" />
       </TouchableOpacity>
 
       {/* Menu Suspenso */}
@@ -149,22 +150,23 @@ export default function Home({ navigation }) {
         Bem-vindo {user && user.nome} !
       </Animated.Text>
 
-      <div
-      style={{ height: '200px', width: '80%', marginBottom: '20px'}}
-      dangerouslySetInnerHTML={{
-        __html: `
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/ZtpTOTi2jqo"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        `
-      }}
-    />
-
+      <View style={{ height: 200, width: "80%", marginBottom: 20 }}>
+        <WebView
+          style={{ height: 200, width: "100%" }}
+          source={{
+            html: `
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.youtube.com/embed/Wq5GHA3V4"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      `,
+          }}
+        />
+      </View>
       <View style={styles.quoteContainer}>
         <Text style={styles.quoteText}>{motivationalQuote}</Text>
       </View>
@@ -195,8 +197,8 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            navigation.navigate("Biblioteca", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+          onPress={
+            () => navigation.navigate("Biblioteca", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
           }
         >
           <Text style={styles.buttonText}>Biblioteca de exercícios</Text>
@@ -212,6 +214,8 @@ export default function Home({ navigation }) {
       >
         <MinhaDieta onClose={() => setModalVisible(false)} />
       </Modal>
+
+      <Navbar navigation={navigation} handleLogout={handleLogout} />
     </ImageBackground>
   );
 }
@@ -236,8 +240,8 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: 100,
+    right: 100,
   },
   quoteContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",

@@ -60,10 +60,10 @@ const LoginForm = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground
-    source={require("../images/background1.jpg")}
-    style={styles.container}
-  >      <Ionicons name="person-outline" size={90} color="#8A2BE2" />
+   <>
+   
+      <View style={styles.container}>
+  <Ionicons name="person-outline" size={90} color="#8A2BE2" />
       <Text style={styles.title}>Login</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
@@ -85,21 +85,23 @@ const LoginForm = ({ navigation }) => {
         />
       </View>
       <TouchableOpacity
-        style={styles.button}
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.buttonText}>Entrar</Text>
-        )}
-      </TouchableOpacity>
+  style={styles.button}
+  onPress={handleLogin}
+  disabled={!!loading}
+>
+  {!loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
+    <Text style={styles.buttonText}>Entrar</Text>
+  )}
+</TouchableOpacity>
       <Text style={styles.errorText}>{loginError}</Text>
       <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
         <Text style={styles.linkText}>Cadastrar-se</Text>
       </TouchableOpacity>
-    </ImageBackground>
+
+    </View>
+   </>  
   );
 };
 

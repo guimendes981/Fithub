@@ -41,11 +41,11 @@ export default function UserProfile() {
           style={styles.backButton}
           onPress={() => navigation.navigate("Home")}
         >
-          <Icon name="arrow-back" size={30} color="#8A2BE2" />{" "}
+          <Icon name="arrow-back" size={30} color="#8A2BE2" />
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>Perfil do Usuário</Text>
-      {user && (
+      {user ? (
         <View style={styles.userInfo}>
 {/* 
 uid: userCredential.user.uid,
@@ -176,7 +176,7 @@ uid: userCredential.user.uid,
             
           
         </View>
-      )}
+      ) : null }
     </ImageBackground>
   );
 }
