@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 
@@ -32,7 +32,6 @@ export default function CadastroForm({ navigation }) {
   const [focusedField, setFocusedField] = useState("");
 
   const handleCadastro = () => {
-    // Verificações dos campos
     if (!isValidEmail(email)) {
       setCadastrarError("Email inválido");
       return;
@@ -50,11 +49,25 @@ export default function CadastroForm({ navigation }) {
       return;
     }
 
-    // Dados válidos, prossegue com o cadastro
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         try {
+          await updateProfile(auth.currentUser, {
+            displayName: nome,
+            idade: idade,
+            altura: altura,
+            peso: peso,
+            sexo: sexo,
+            ativo: ativo === "Sim" ? true : false,
+            horario: horario,
+            nivel: nivel,
+            selectedDiasSemana: selectedDiasSemana,
+            objetivo: objetivo,
+            treinou: treinou,
+          });
+
           const docRef = await addDoc(collection(db, "users"), {
+            uid: userCredential.user.uid,
             nome,
             email,
             password,
@@ -72,7 +85,7 @@ export default function CadastroForm({ navigation }) {
 
           console.log("Document written with ID: ", docRef.id);
 
-          navigation.navigate("LoginForm"); 
+          navigation.navigate("LoginForm");
         } catch (error) {
           console.error("Error adding document: ", error);
           setCadastrarError("Erro ao cadastrar usuário");
@@ -83,7 +96,10 @@ export default function CadastroForm({ navigation }) {
         const errorMessage = error.message;
         setCadastrarError(errorMessage);
       });
-  };
+      
+
+      console.log(peso);
+    };
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -91,12 +107,12 @@ export default function CadastroForm({ navigation }) {
 
   const toggleSexoOptions = () => {
     setSexoOptionsVisible(!sexoOptionsVisible);
-    setAtivoOptionsVisible(false); // Fechar opções de ativo se estiverem abertas
+    setAtivoOptionsVisible(false); 
   };
 
   const toggleAtivoOptions = () => {
     setAtivoOptionsVisible(!ativoOptionsVisible);
-    setSexoOptionsVisible(false); // Fechar opções de sexo se estiverem abertas
+    setSexoOptionsVisible(false);
   };
 
   const selectSexoOption = (selectedSexo) => {

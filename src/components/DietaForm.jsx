@@ -27,7 +27,6 @@ export default function DietaForm() {
     const refeicoesAtualizadas = { ...refeicoesSalvas, [refeicao]: [...(refeicoesSalvas[refeicao] || []), novaRefeicao] };
     setRefeicoesSalvas(refeicoesAtualizadas);
     console.log('Refeições Atualizadas:', refeicoesAtualizadas);
-    // Limpar os campos após inserir
     setComida('');
     setQuantidade('');
   };

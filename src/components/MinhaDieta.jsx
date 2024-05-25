@@ -1,20 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from "react-native";
+import { auth, db } from "../services/firebaseConfig";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const MinhaDieta = ({ visible, onClose }) => {
-  const [refeicoes, setRefeicoes] = useState([]);
+  const [user, setUser] = useState({});
+  const [treinos, setTreinos] = useState([]);
 
-  // Exemplo de dados de refeições (pode ser obtido de um banco de dados, API, etc.)
-  const dadosRefeicoes = [
-    { id: 1, refeicao: 'Café da Manhã', descricao: 'Pão integral, ovos, frutas' },
-    { id: 2, refeicao: 'Almoço', descricao: 'Arroz, feijão, frango grelhado, salada' },
-    { id: 3, refeicao: 'Lanche da Tarde', descricao: 'Iogurte natural, castanhas' },
-    { id: 4, refeicao: 'Jantar', descricao: 'Peixe assado, batatas, legumes cozidos' },
-  ];
+  const fetchUserData = async () => {
+    try {
+      const usuario = auth.currentUser; // Obter o usuário atual
+      if (usuario) {
+        onSnapshot(collection(db, "users"), (snapshot) => {
+          snapshot.forEach((doc) => {
+            if (usuario.uid === doc.data().uid) {
+              console.log(doc.id, "=>", doc.data());
+              setUser(doc.data());
+            }
+          });
+        });
+
+        onSnapshot(collection(db, "treinos"), (snapshot) => {
+          const newTreinos = [];
+          snapshot.forEach((doc) => {
+            if (usuario.uid === doc.data().userId) {
+              console.log(doc.id, "=>", doc.data());
+              newTreinos.push({ id: doc.id, ...doc.data() });
+            }
+          });
+          setTreinos(newTreinos);
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao obter dados do usuário:", error.message);
+    }
+  };
 
   useEffect(() => {
-    // Simula a obtenção de dados de refeições (pode ser uma chamada API, consulta ao banco de dados, etc.)
-    setRefeicoes(dadosRefeicoes);
+    fetchUserData();
   }, []);
 
   return (
@@ -26,14 +56,16 @@ const MinhaDieta = ({ visible, onClose }) => {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>Minha Dieta</Text>
+          <Text style={styles.title}>Meu treino de hoje</Text>
           <FlatList
-            data={refeicoes}
+            data={treinos}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View style={styles.itemContainer}>
-                <Text style={styles.refeicaoText}>{item.refeicao}</Text>
-                <Text style={styles.descricaoText}>{item.descricao}</Text>
+                <Text style={styles.refeicaoText}>Exercício: {item.nome}</Text>
+                <Text style={styles.descricaoText}>Peso: {item.peso}</Text>
+                <Text style={styles.descricaoText}>Séries: {item.series}</Text>
+                <Text style={styles.descricaoText}>Repetições: {item.repeticoes}</Text>
               </View>
             )}
           />
@@ -49,18 +81,18 @@ const MinhaDieta = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
+    width: "80%",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   itemContainer: {
@@ -68,7 +100,7 @@ const styles = StyleSheet.create({
   },
   refeicaoText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   descricaoText: {
@@ -76,15 +108,15 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: '#8A2BE2',
+    backgroundColor: "#8A2BE2",
     borderRadius: 5,
     paddingVertical: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   closeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

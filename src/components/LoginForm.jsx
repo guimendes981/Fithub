@@ -5,47 +5,65 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
+import { auth, db } from "../services/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
-const LoginForm = ({ setUser, navigation }) => {
+
+const LoginForm = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        // ...
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setLoginError(errorMessage);
-      });
-
     if (!email || !password) {
       setLoginError("Preencha todos os campos.");
       return;
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!isValidEmail(email)) {
       setLoginError("Email inválido. Por favor, insira um email válido.");
       return;
     }
 
-    // Limpar os campos após o login
-    setEmail("");
-    setPassword("");
-    setLoginError("");
+    setLoading(true);
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        // Autenticado com sucesso
+        const user = userCredential.user;
+        // Obter os dados do usuário do Firestore
+        const userDoc = doc(db, "users", user.uid);
+        const userData = (await getDoc(userDoc)).data();
+        // Armazenar os dados do usuário em algum estado ou contexto global
+        setUser(userData); // Definir setUser como a função para atualizar o estado do usuário
+
+        setLoading(false);
+        console.log("Usuário autenticado:", user);
+        navigation.navigate("Home");
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        setLoginError(errorMessage);
+        setLoading(false);
+      });
+  };
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   return (
-    <View style={styles.container}>
-      <Ionicons name="person-outline" size={90} color="#8A2BE2" />
+   <>
+   
+      <View style={styles.container}>
+  <Ionicons name="person-outline" size={90} color="#8A2BE2" />
       <Text style={styles.title}>Login</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
@@ -66,14 +84,24 @@ const LoginForm = ({ setUser, navigation }) => {
           value={password}
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+  style={styles.button}
+  onPress={handleLogin}
+  disabled={!!loading}
+>
+  {!loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
+    <Text style={styles.buttonText}>Entrar</Text>
+  )}
+</TouchableOpacity>
       <Text style={styles.errorText}>{loginError}</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('CadastroForm')}>
+      <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
         <Text style={styles.linkText}>Cadastrar-se</Text>
       </TouchableOpacity>
+
     </View>
+   </>  
   );
 };
 
