@@ -22,6 +22,11 @@ export default function Home({ navigation }) {
     "A persistência é o caminho do êxito.",
     "Só existe um êxito: a capacidade de levar a vida que se quer.",
     "O sucesso é ir de fracasso em fracasso sem perder o entusiasmo.",
+    "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
+    "O segredo do sucesso é a constância do propósito.",
+    "Quem quer vencer um obstáculo deve armar-se da força do leão e da prudência da serpente.",
+    "A coragem não é ausência do medo; é a persistência apesar do medo.",
+    "Só é lutador quem sabe lutar consigo mesmo.",
   ];
 
   const [motivationalQuote, setMotivationalQuote] = useState("");
