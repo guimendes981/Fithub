@@ -87,9 +87,9 @@ const LoginForm = ({ navigation }) => {
       <TouchableOpacity
   style={styles.button}
   onPress={handleLogin}
-  disabled={!!loading}
+  disabled={loading}
 >
-  {!loading ? (
+  {loading ? (
     <ActivityIndicator color="white" />
   ) : (
     <Text style={styles.buttonText}>Entrar</Text>

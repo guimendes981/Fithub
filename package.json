@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-firebase/app": "^19.2.2",
     "@react-native-picker/picker": "^2.7.5",
@@ -18,7 +19,7 @@
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.5.0",
     "cors": "^2.8.5",
-    "expo": "^51.0.8",
+    "expo": "^50.0.19",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.9.0",
     "react": "18.2.0",
