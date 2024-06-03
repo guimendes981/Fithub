@@ -136,7 +136,7 @@ export default function Home({ navigation }) {
         style={styles.profileIcon}
         onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
       >
-        <FontAwesome name="user" size={24} color="#FFF" />
+        <FontAwesome name="user" size={28} color="#FFF" />
       </TouchableOpacity>
 
       {/* Menu Suspenso */}
@@ -220,7 +220,7 @@ export default function Home({ navigation }) {
         <MinhaDieta onClose={() => setModalVisible(false)} />
       </Modal>
 
-      <Navbar navigation={navigation} handleLogout={handleLogout} />
+      {/* <Navbar navigation={navigation} handleLogout={handleLogout} /> */}
     </ImageBackground>
   );
 }
@@ -245,8 +245,8 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     position: "absolute",
-    top: 100,
-    right: 100,
+    top: 50,
+    right: 20,
   },
   quoteContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: "absolute",
-    top: 40, // Ajuste conforme necessário
+    top: 80, // Ajuste conforme necessário
     right: 10,
     backgroundColor: "#FFF",
     borderRadius: 5,
