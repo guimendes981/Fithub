@@ -54,19 +54,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#232323",
     width: "100%",
-    height: "100%",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#8A2BE2",
     marginBottom: 20,
+    marginTop: '15%',
   },
   exerciseItem: {
     marginTop: 20,
     backgroundColor: "#FFF",
-    padding: 10,
+    padding: 5,
     marginVertical: 5,
+    width: 300,
     borderRadius: 5,
   },
   exerciseName: {

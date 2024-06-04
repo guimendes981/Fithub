@@ -121,11 +121,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#232323",
     width: "100%",
-    height: "100%",
   },
   backButton: {
     position: "absolute",
-    top: 10,
+    top: 30,
     left: 10,
   },
   heading: {
@@ -133,6 +132,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFF",
     marginBottom: 20,
+    marginTop: '35%',
   },
   topLeft: {
     position: "absolute",

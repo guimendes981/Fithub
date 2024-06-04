@@ -206,8 +206,8 @@ export default function TreinoForm(user) {
               </View>
             </ScrollView>
           )}
-          keyExtractor={(item) => item.id}
-        />
+          keyExtractor={(item, index) => index.toString()}
+          />
       </View>
     </>
   );

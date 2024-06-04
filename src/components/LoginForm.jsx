@@ -48,8 +48,7 @@ const LoginForm = ({ navigation }) => {
 
         setLoading(false);
         console.log("Usuário autenticado:", user);
-        navigation.navigate("Home");
-      })
+        navigation.navigate('Home', { userId: user.uid }); })
       .catch((error) => {
         const errorMessage = error.message;
         setLoginError(errorMessage);
