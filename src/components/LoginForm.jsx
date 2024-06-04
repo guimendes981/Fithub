@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-
 
 const LoginForm = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -21,7 +24,6 @@ const LoginForm = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [resetEmail, setResetEmail] = useState("");
-
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -48,7 +50,8 @@ const LoginForm = ({ navigation }) => {
 
         setLoading(false);
         console.log("Usuário autenticado:", user);
-        navigation.navigate('Home', { userId: user.uid }); })
+        navigation.navigate("Home", { userId: user.uid });
+      })
       .catch((error) => {
         const errorMessage = error.message;
         setLoginError(errorMessage);
@@ -82,61 +85,74 @@ const LoginForm = ({ navigation }) => {
   };
 
   return (
-   <>
-   
+    <>
       <View style={styles.container}>
-  <Ionicons name="person-outline" size={90} color="#8A2BE2" />
-      <Text style={styles.title}>Login</Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
+        {/* <Ionicons name="person-outline" size={90} color="#8A2BE2" /> */}
+
+        <Image
+          source={require("../images/Logo.png")} // replace with your image path
+          style={{ width: 300, height: 200 }} // replace with your desired dimensions
         />
+        <Text style={styles.title}>Login</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            placeholder="Email"
+            style={styles.input}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Senha</Text>
+          <TextInput
+            placeholder="Senha"
+            style={styles.input}
+            secureTextEntry
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </TouchableOpacity>
+        <Text style={styles.errorText}>{loginError}</Text>
+
+        <TouchableOpacity
+          onPress={() =>
+            Alert.prompt(
+              "Password Reset",
+              "Enter your email to receive a password reset link.",
+              [
+                { text: "Cancel" },
+                {
+                  text: "Submit",
+                  onPress: (email) => {
+                    setResetEmail(email);
+                    handlePasswordReset();
+                  },
+                },
+              ],
+              "plain-text"
+            )
+          }
+        >
+          <Text style={styles.linkText}>Recuperar Senha</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
+          <Text style={styles.linkText}>Cadastrar-se</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          placeholder="Senha"
-          style={styles.input}
-          secureTextEntry
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-        />
-      </View>
-      <TouchableOpacity
-  style={styles.button}
-  onPress={handleLogin}
-  disabled={loading}
->
-  {loading ? (
-    <ActivityIndicator color="white" />
-  ) : (
-    <Text style={styles.buttonText}>Entrar</Text>
-  )}
-</TouchableOpacity>
-      <Text style={styles.errorText}>{loginError}</Text>
-
-      <TouchableOpacity onPress={() => Alert.prompt(
-        "Password Reset",
-        "Enter your email to receive a password reset link.",
-        [
-          { text: "Cancel" },
-          { text: "Submit", onPress: (email) => { setResetEmail(email); handlePasswordReset(); } }
-        ],
-        "plain-text"
-      )}>
-        <Text style={styles.linkText}>Recuperar Senha</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
-        <Text style={styles.linkText}>Cadastrar-se</Text>
-      </TouchableOpacity>
-
-    </View>
-   </>  
+    </>
   );
 };
 
