@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
-import { WebView } from 'react-native-webview';
-
+import { WebView } from "react-native-webview";
 
 const exercises = [
   { name: "Agachamento", videoId: "ddCEZHpVqqc" },
@@ -10,24 +9,11 @@ const exercises = [
   { name: "Abdominal", videoId: "2pLT-olgUJs" },
   { name: "Panturrilha em Pé", videoId: "720lq1j9mhs" },
   { name: "Barra Fixa", videoId: "eGo4IYlbE5g" },
-  { name: "Rosca Direta", videoId: "8w2bX0eDwv8" },
   { name: "Desenvolvimento de Ombros", videoId: "6Z15ZDhK9hM" },
   { name: "Remada Curvada", videoId: "Dy28eq2PjcM" },
   { name: "Elevação Lateral", videoId: "7c5bYX4Ox3M" },
   { name: "Tríceps Pulley", videoId: "2yjwXTZQDDI" },
   { name: "Rosca Alternada", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Concentrada", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Martelo", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Inversa", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Scott", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca 21", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Punho", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Testa", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Francesa", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca 21", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Punho", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Testa", videoId: "8w2bX0eDwv8" },
-  { name: "Rosca Francesa", videoId: "8w2bX0eDwv8" },
 ];
 
 export default function ExerciseList() {
@@ -35,15 +21,15 @@ export default function ExerciseList() {
     <View style={styles.container}>
       <Text style={styles.title}>Biblioteca de Exercícios</Text>
       <FlatList
-  data={exercises}
-  keyExtractor={(item) => item.videoId}
-  renderItem={({ item }) => (
-    <View style={styles.exerciseItem}>
-      <Text style={styles.exerciseName}>{item.name}</Text>
-      <WebView
-        style={{ height: 300, width: '100%' }}
-        source={{
-          html: `
+        data={exercises}
+        keyExtractor={(item) => item.videoId}
+        renderItem={({ item }) => (
+          <View style={styles.exerciseItem}>
+            <Text style={styles.exerciseName}>{item.name}</Text>
+            <WebView
+              style={{ height: 300, width: "100%" }}
+              source={{
+                html: `
             <iframe
               width="100%"
               height="100%"
@@ -53,11 +39,11 @@ export default function ExerciseList() {
               allowfullscreen
             ></iframe>
           `,
-        }}
+              }}
+            />
+          </View>
+        )}
       />
-    </View>
-  )}
-/>
     </View>
   );
 }

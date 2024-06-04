@@ -6,10 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  ImageBackground,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "react-native-web";
@@ -20,6 +20,8 @@ const LoginForm = ({ navigation }) => {
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [resetEmail, setResetEmail] = useState("");
+
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -57,6 +59,27 @@ const LoginForm = ({ navigation }) => {
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handlePasswordReset = () => {
+    if (!resetEmail) {
+      Alert.alert("Please enter your email address.");
+      return;
+    }
+
+    if (!isValidEmail(resetEmail)) {
+      Alert.alert("Invalid email. Please enter a valid email.");
+      return;
+    }
+
+    sendPasswordResetEmail(auth, resetEmail)
+      .then(() => {
+        Alert.alert("Password reset email sent!");
+        setResetEmail("");
+      })
+      .catch((error) => {
+        Alert.alert(error.message);
+      });
   };
 
   return (
