@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-
+import { Image } from "react-native-web";
 
 const LoginForm = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -60,48 +60,49 @@ const LoginForm = ({ navigation }) => {
   };
 
   return (
-   <>
-   
+    <>
       <View style={styles.container}>
-  <Ionicons name="person-outline" size={90} color="#8A2BE2" />
-      <Text style={styles.title}>Login</Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          placeholder="Senha"
-          style={styles.input}
-          secureTextEntry
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-        />
-      </View>
-      <TouchableOpacity
-  style={styles.button}
-  onPress={handleLogin}
-  disabled={!!loading}
->
-  {!loading ? (
-    <ActivityIndicator color="white" />
-  ) : (
-    <Text style={styles.buttonText}>Entrar</Text>
-  )}
-</TouchableOpacity>
-      <Text style={styles.errorText}>{loginError}</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
-        <Text style={styles.linkText}>Cadastrar-se</Text>
-      </TouchableOpacity>
+        {/* <Ionicons name="person-outline" size={90} color="#8A2BE2" /> */}
 
-    </View>
-   </>  
+        {/* <img src="./images/logo.png" style={styles.logo} /> */}
+        <Image source={require("../images/logo.png")} style={styles.logo} />
+        <Text style={styles.title}>Login</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            placeholder="Email"
+            style={styles.input}
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Senha</Text>
+          <TextInput
+            placeholder="Senha"
+            style={styles.input}
+            secureTextEntry
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={!!loading}
+        >
+          {!loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </TouchableOpacity>
+        <Text style={styles.errorText}>{loginError}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
+          <Text style={styles.linkText}>Cadastrar-se</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
@@ -111,6 +112,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#232323",
+  },
+  logo: {
+    width: 350,
+    height: 150,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,

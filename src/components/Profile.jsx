@@ -10,7 +10,6 @@ export default function UserProfile() {
   const [user, setUser] = useState(null);
   const navigation = useNavigation();
 
-  
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -174,7 +173,6 @@ uid: userCredential.user.uid,
                 </Card.Content>
             </Card>
             
-          
         </View>
       ) : null }
     </ImageBackground>
