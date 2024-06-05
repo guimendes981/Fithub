@@ -50,16 +50,20 @@ export default function TreinoList() {
   const handleDelete = async (treinoId, exercicioId) => {
     const treino = treinos.find((treino) => treino.id === treinoId);
 
-    console.log(exercicioId);
-    console.log(treino);
-
-    // deleteDoc(doc(db, "treinos", exercicioId));
+    if (!treino) return;
 
     const updatedExercicios = treino.exercicios.filter(
       (exercicio) => exercicio.id !== exercicioId
     );
 
-    updateDoc(doc(db, "treinos", treinoId), { exercicios: updatedExercicios });
+    await updateDoc(doc(db, "treinos", treinoId), { exercicios: updatedExercicios });
+
+    const updatedTreinos = treinos.map((t) =>
+      t.id === treinoId ? { ...t, exercicios: updatedExercicios } : t
+    );
+
+    setTreinos(updatedTreinos);
+    setSelectedTreino({ ...treino, exercicios: updatedExercicios });
   };
 
   const renderItem = ({ item }) => (
@@ -101,39 +105,35 @@ export default function TreinoList() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <View style={styles.modalView}>
-                {selectedTreino ? (
-                  selectedTreino.exercicios.length > 0 ? (
-                    selectedTreino.exercicios.map((exercicio, index) => (
-                      <View key={index} style={styles.exercicioItem}>
-                        <Text style={styles.text}>
-                          Exercício: {exercicio.nome}
+              {selectedTreino ? (
+                selectedTreino.exercicios.length > 0 ? (
+                  selectedTreino.exercicios.map((exercicio, index) => (
+                    <View key={index} style={styles.exercicioItem}>
+                      <Text style={styles.text}>
+                        Exercício: {exercicio.nome}
+                      </Text>
+                      <Text style={styles.text}>Peso: {exercicio.peso}</Text>
+                      <Text style={styles.text}>
+                        Repetições: {exercicio.repeticoes}
+                      </Text>
+                      <Text style={styles.text}>Séries: {exercicio.series}</Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleDelete(selectedTreino.id, exercicio.id)
+                        }
+                      >
+                        <Text style={{ ...styles.text, color: "red" }}>
+                          Deletar
                         </Text>
-                        <Text style={styles.text}>Peso: {exercicio.peso}</Text>
-                        <Text style={styles.text}>
-                          Repetições: {exercicio.repeticoes}
-                        </Text>
-                        <Text style={styles.text}>
-                          Séries: {exercicio.series}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            handleDelete(selectedTreino.id, exercicio.id)
-                          }
-                        >
-                          <Text style={{ ...styles.text, color: "red" }}>
-                            Deletar
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    ))
-                  ) : (
-                    <Text style={styles.text}>Nenhum exercício encontrado</Text>
-                  )
+                      </TouchableOpacity>
+                    </View>
+                  ))
                 ) : (
-                  <Text style={styles.text}>Nenhum treino selecionado</Text>
-                )}
-              </View>
+                  <Text style={styles.text}>Nenhum exercício encontrado</Text>
+                )
+              ) : (
+                <Text style={styles.text}>Nenhum treino selecionado</Text>
+              )}
               <TouchableOpacity
                 style={{ ...styles.button, backgroundColor: "#8A2BE2" }}
                 onPress={() => {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#8A2BE2", // Alterado para roxo
+    backgroundColor: "#8A2BE2",
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
