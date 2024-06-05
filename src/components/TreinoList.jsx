@@ -10,7 +10,13 @@ import {
   Modal,
   ImageBackground,
 } from "react-native";
-import { collection, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../services/firebaseConfig";
 import * as Animatable from "react-native-animatable";
 
@@ -40,7 +46,22 @@ export default function TreinoList() {
     setSelectedTreino(treino);
     setModalVisible(true);
   };
-  
+
+  const handleDelete = async (treinoId, exercicioId) => {
+    const treino = treinos.find((treino) => treino.id === treinoId);
+
+    console.log(exercicioId);
+    console.log(treino);
+
+    // deleteDoc(doc(db, "treinos", exercicioId));
+
+    const updatedExercicios = treino.exercicios.filter(
+      (exercicio) => exercicio.id !== exercicioId
+    );
+
+    updateDoc(doc(db, "treinos", treinoId), { exercicios: updatedExercicios });
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.treinoItem}
@@ -49,7 +70,7 @@ export default function TreinoList() {
       <Text style={styles.title}>{item.nome}</Text>
     </TouchableOpacity>
   );
-  
+
   return (
     <ImageBackground
       source={require("../images/background1.jpg")}
@@ -80,24 +101,39 @@ export default function TreinoList() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-            <View style={styles.modalView}>
-  {selectedTreino ? (
-    selectedTreino.exercicios ? (
-      selectedTreino.exercicios.map((exercicio, index) => (
-        <View key={index} style={styles.exercicioItem}>
-          <Text style={styles.text}>Exercício: {exercicio.nome}</Text>
-          <Text style={styles.text}>Peso: {exercicio.peso}</Text>
-          <Text style={styles.text}>Repetições: {exercicio.repeticoes}</Text>
-          <Text style={styles.text}>Séries: {exercicio.series}</Text>
-        </View>
-      ))
-    ) : (
-      <Text style={styles.text}>Nenhum exercício encontrado</Text>
-    )
-  ) : (
-    <Text style={styles.text}>Nenhum treino selecionado</Text>
-  )}
-</View>
+              <View style={styles.modalView}>
+                {selectedTreino ? (
+                  selectedTreino.exercicios.length > 0 ? (
+                    selectedTreino.exercicios.map((exercicio, index) => (
+                      <View key={index} style={styles.exercicioItem}>
+                        <Text style={styles.text}>
+                          Exercício: {exercicio.nome}
+                        </Text>
+                        <Text style={styles.text}>Peso: {exercicio.peso}</Text>
+                        <Text style={styles.text}>
+                          Repetições: {exercicio.repeticoes}
+                        </Text>
+                        <Text style={styles.text}>
+                          Séries: {exercicio.series}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() =>
+                            handleDelete(selectedTreino.id, exercicio.id)
+                          }
+                        >
+                          <Text style={{ ...styles.text, color: "red" }}>
+                            Deletar
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))
+                  ) : (
+                    <Text style={styles.text}>Nenhum exercício encontrado</Text>
+                  )
+                ) : (
+                  <Text style={styles.text}>Nenhum treino selecionado</Text>
+                )}
+              </View>
               <TouchableOpacity
                 style={{ ...styles.button, backgroundColor: "#8A2BE2" }}
                 onPress={() => {
@@ -111,7 +147,7 @@ export default function TreinoList() {
         </Modal>
       </Animatable.View>
     </ImageBackground>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -132,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFF",
     marginBottom: 20,
-    marginTop: '35%',
+    marginTop: "35%",
   },
   topLeft: {
     position: "absolute",

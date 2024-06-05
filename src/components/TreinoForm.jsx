@@ -23,13 +23,15 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Picker } from "@react-native-picker/picker";
 import Home from "./Home";
 
-export default function TreinoForm(user) {
+export default function TreinoForm({ navigation, route }) {
   const [nome, setNome] = useState("");
   const [exercicio, setExercicio] = useState("");
   const [peso, setPeso] = useState("");
   const [series, setSeries] = useState("");
   const [repeticoes, setRepeticoes] = useState("");
   const [treinos, setTreinos] = useState([]);
+
+  const { userId } = route.params;
 
   useEffect(() => {
     fetchUserData();
@@ -72,6 +74,7 @@ export default function TreinoForm(user) {
   const handleSalvar = async () => {
     const user = auth.currentUser;
     const novoExercicio = {
+      id: Math.random().toString(36).substr(2, 9),
       nome: exercicio,
       peso: peso,
       series: series,
@@ -121,15 +124,23 @@ export default function TreinoForm(user) {
 
   const allExercises = treinos.flatMap((treino) => treino.exercicios);
 
-  const handleDelete = async (id) => {
-    const treinoRef = doc(db, "treinos", id);
+  const handleDelete = async (exercicio) => {
+    const treino = treinos.find((exercicio) => treino.id === treinoId);
+    if (!treino) return;
+  
+    const updatedExercicios = treino.exercicios.filter(
+      (exercicio) => exercicio.nome !== exercicioNome
+    );
+    console.log(updatedExercicios);
+    
+    const treinoDocRef = doc(db, "treinos", treinoId);
+    await updateDoc(treinoDocRef, { exercicios: updatedExercicios });
+  
+    const updatedTreinos = treinos.map((treino) =>
+      treino.id === treinoId ? { ...treino, exercicios: updatedExercicios } : treino
+    );
 
-    try {
-      await deleteDoc(treinoRef);
-      console.log(`Treino with id ${id} has been deleted.`);
-    } catch (e) {
-      console.error("Error deleting treino: ", e);
-    }
+    setTreinos(updatedTreinos);
   };
 
   return (
@@ -139,7 +150,7 @@ export default function TreinoForm(user) {
           style={styles.backButton}
           onPress={() => navigation.navigate("Home")}
         >
-          <Icon name="arrow-left" size={30} color="#900" />
+          <Icon name="arrow-left" size={30} color="#8A2BE2" style={{marginTop: 30}}/>
         </TouchableOpacity>
 
       <Text style={styles.title}>
