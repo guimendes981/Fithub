@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Modal,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -22,8 +22,8 @@ const LoginForm = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const [resetEmail, setResetEmail] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleLogin = () => {
     if (!email || !password) {
@@ -40,13 +40,10 @@ const LoginForm = ({ navigation }) => {
 
     signInWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
-        // Autenticado com sucesso
         const user = userCredential.user;
-        // Obter os dados do usuário do Firestore
         const userDoc = doc(db, "users", user.uid);
         const userData = (await getDoc(userDoc)).data();
-        // Armazenar os dados do usuário em algum estado ou contexto global
-        setUser(userData); // Definir setUser como a função para atualizar o estado do usuário
+        // setUser(userData); 
 
         setLoading(false);
         console.log("Usuário autenticado:", user);
@@ -65,19 +62,20 @@ const LoginForm = ({ navigation }) => {
 
   const handlePasswordReset = () => {
     if (!resetEmail) {
-      Alert.alert("Please enter your email address.");
+      Alert.alert("Por favor, insira seu endereço de e-mail.");
       return;
     }
 
     if (!isValidEmail(resetEmail)) {
-      Alert.alert("Invalid email. Please enter a valid email.");
+      Alert.alert("Email inválido. Por favor, insira um email válido.");
       return;
     }
 
     sendPasswordResetEmail(auth, resetEmail)
       .then(() => {
-        Alert.alert("Password reset email sent!");
+        Alert.alert("E-mail de recuperação de senha enviado!");
         setResetEmail("");
+        setModalVisible(false); // Fecha o modal após o envio do e-mail
       })
       .catch((error) => {
         Alert.alert(error.message);
@@ -85,74 +83,75 @@ const LoginForm = ({ navigation }) => {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        {/* <Ionicons name="person-outline" size={90} color="#8A2BE2" /> */}
-
-        <Image
-          source={require("../images/Logo.png")} // replace with your image path
-          style={{ width: 300, height: 200 }} // replace with your desired dimensions
+    <View style={styles.container}>
+      <Image
+        source={require("../images/Logo.png")}
+        style={{ width: 300, height: 200 }}
+      />
+      <Text style={styles.title}>Login</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
         />
-        <Text style={styles.title}>Login</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            placeholder="Email"
-            style={styles.input}
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Senha</Text>
-          <TextInput
-            placeholder="Senha"
-            style={styles.input}
-            secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-          />
-        </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Entrar</Text>
-          )}
-        </TouchableOpacity>
-        <Text style={styles.errorText}>{loginError}</Text>
-
-        <TouchableOpacity
-          onPress={() =>
-            Alert.prompt(
-              "Password Reset",
-              "Enter your email to receive a password reset link.",
-              [
-                { text: "Cancel" },
-                {
-                  text: "Submit",
-                  onPress: (email) => {
-                    setResetEmail(email);
-                    handlePasswordReset();
-                  },
-                },
-              ],
-              "plain-text"
-            )
-          }
-        >
-          <Text style={styles.linkText}>Recuperar Senha</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
-          <Text style={styles.linkText}>Cadastrar-se</Text>
-        </TouchableOpacity>
       </View>
-    </>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Senha</Text>
+        <TextInput
+          placeholder="Senha"
+          style={styles.input}
+          secureTextEntry
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+        />
+      </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
+      </TouchableOpacity>
+      <Text style={styles.errorText}>{loginError}</Text>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Text style={styles.linkText}>Esqueceu a senha?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("CadastroForm")}>
+        <Text style={styles.linkText}>Cadastrar-se</Text>
+      </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Recuperar Senha</Text>
+            <TextInput
+              placeholder="Digite seu e-mail"
+              style={styles.input}
+              onChangeText={(text) => setResetEmail(text)}
+              value={resetEmail}
+            />
+            <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
+              <Text style={styles.buttonText}>Enviar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.linkText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
@@ -209,6 +208,24 @@ const styles = StyleSheet.create({
     color: "#8A2BE2",
     marginTop: 20,
     textDecorationLine: "underline",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });
 

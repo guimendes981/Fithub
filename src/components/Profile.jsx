@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   topLeft: {
     position: "absolute",
-    top: 10,
+    top: 30,
     left: 10,
   },
   backButton: {
