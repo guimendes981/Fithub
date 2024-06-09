@@ -3,25 +3,43 @@ import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
 import { WebView } from "react-native-webview";
 
 const exercises = [
-  { name: "Agachamento", videoId: "ddCEZHpVqqc" },
+  { name: "Agachamento", videoId: "xqvCmoLULNY" },
   { name: "Supino Reto", videoId: "fG_03xSzT2s" },
-  { name: "Flexão de Braço", videoId: "a_n7mtAOEO0" },
+  { name: "Flexão de Braço", videoId: "GOj4TMPVuZg" },
   { name: "Abdominal", videoId: "2pLT-olgUJs" },
-  { name: "Panturrilha em Pé", videoId: "720lq1j9mhs" },
+  { name: "Panturrilha em Pé", videoId: "h7bZ4XbuZLg" },
   { name: "Barra Fixa", videoId: "eGo4IYlbE5g" },
-  { name: "Desenvolvimento de Ombros", videoId: "6Z15ZDhK9hM" },
-  { name: "Remada Curvada", videoId: "Dy28eq2PjcM" },
-  { name: "Elevação Lateral", videoId: "7c5bYX4Ox3M" },
-  { name: "Tríceps Pulley", videoId: "2yjwXTZQDDI" },
-  { name: "Rosca Alternada", videoId: "8w2bX0eDwv8" },
+  { name: "Desenvolvimento de Ombros", videoId: "Nu1lKrS-Vvw" },
+  { name: "Remada Curvada", videoId: "InPm_ic6Xng" },
+  { name: "Elevação Lateral", videoId: "VhUbT9AsU7E" },
+  { name: "Tríceps Pulley", videoId: "wQdCw93LkcI" },
+  { name: "Rosca Alternada", videoId: "ja45paikjpU" },
 ];
 
 export default function ExerciseList() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredExercises, setFilteredExercises] = useState(exercises);
+
+  const handleSearch = (text) => {
+    setSearchTerm(text);
+    const filtered = exercises.filter((exercise) =>
+      exercise.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredExercises(filtered);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Biblioteca de Exercícios</Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Buscar exercícios"
+        onChangeText={handleSearch}
+        value={searchTerm}
+      />
       <FlatList
-        data={exercises}
+        style={{ flex: 1 }}
+        data={filteredExercises}
         keyExtractor={(item) => item.videoId}
         renderItem={({ item }) => (
           <View style={styles.exerciseItem}>
@@ -54,13 +72,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#232323",
     width: "100%",
+    flex: 1,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#8A2BE2",
     marginBottom: 20,
-    marginTop: '15%',
+    marginTop: "15%",
+  },
+  searchInput: {
+    backgroundColor: "#FFF",
+    width: "80%",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
   },
   exerciseItem: {
     marginTop: 20,
