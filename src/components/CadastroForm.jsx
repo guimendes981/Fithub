@@ -447,6 +447,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#8A2BE2",
     marginBottom: 5,
+    zIndex: -1,
   },
   input: {
     width: "80%",
@@ -503,6 +504,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#8A2BE2",
     borderRadius: 5,
-    zIndex: 9999999,
+    zIndex: 9999, 
   },
 });
