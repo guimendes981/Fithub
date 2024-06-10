@@ -1,6 +1,6 @@
 # FitHub
 
-FitHub é um aplicativo em React Native desenvolvido para ajudar alunos de academias a gerenciarem seus exercícios, treinos, dietas e acompanhar seu progresso físico. Com uma interface intuitiva e recursos úteis, FitHub é o seu assistente pessoal de fitness.
+FitHub é um aplicativo em React Native desenvolvido para ajudar alunos de academias a gerenciarem seus exercícios. Com uma interface intuitiva e recursos úteis, FitHub é o seu assistente pessoal de fitness.
 
 ## Funcionalidades
 
