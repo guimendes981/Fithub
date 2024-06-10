@@ -11,7 +11,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { WebView } from "react-native-webview";
 import { Ionicons } from "@expo/vector-icons";
-import Navbar from './NavBar'; // Importe o componente
+import Navbar from "./NavBar"; // Importe o componente
 import { auth, db } from "../services/firebaseConfig";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import MinhaDieta from "./MinhaDieta";
@@ -35,6 +35,8 @@ export default function Home({ navigation }) {
   const [user, setUser] = useState(null);
   const [treinos, setTreinos] = useState([]);
   const [fadeAnim, setFadeAnim] = useState(new Animated.Value(0));
+  const [imc, setImc] = useState(null);
+  const [igc, setIgc] = useState(null);
 
   useEffect(() => {
     getRandomQuote();
@@ -127,6 +129,16 @@ export default function Home({ navigation }) {
     }
   };
 
+
+    // Função para calcular o IMC e o IGC
+    const calculateIndices = (userData) => {
+      const alturaMetros = userData.altura / 100; // Convertendo altura para metros
+      const imcValue = userData.peso / (alturaMetros * alturaMetros); // Fórmula do IMC
+      const igcValue = 1.2 * imcValue + 0.23 * userData.idade - 10.8 * userData.sexo - 5.4; // Fórmula do IGC
+      setImc(imcValue.toFixed(2)); // Definindo o IMC com duas casas decimais
+      setIgc(igcValue.toFixed(2)); // Definindo o IGC com duas casas decimais
+    };
+    
   return (
     <ImageBackground
       source={require("../images/background1.jpg")}
@@ -136,7 +148,7 @@ export default function Home({ navigation }) {
         style={styles.profileIcon}
         onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
       >
-        <FontAwesome name="user" size={24} color="#FFF" />
+        <FontAwesome name="user" size={28} color="#FFF" />
       </TouchableOpacity>
 
       {/* Menu Suspenso */}
@@ -163,7 +175,7 @@ export default function Home({ navigation }) {
         <iframe
           width="100%"
           height="100%"
-          src="https://www.youtube.com/embed/Wq5GHA3V4"
+          src="https://www.youtube.com/embed/K9Ia1CVd0zY"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
@@ -220,7 +232,7 @@ export default function Home({ navigation }) {
         <MinhaDieta onClose={() => setModalVisible(false)} />
       </Modal>
 
-      <Navbar navigation={navigation} handleLogout={handleLogout} />
+      {/* <Navbar navigation={navigation} handleLogout={handleLogout} /> */}
     </ImageBackground>
   );
 }
@@ -245,8 +257,8 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     position: "absolute",
-    top: 100,
-    right: 100,
+    top: 50,
+    right: 20,
   },
   quoteContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -280,7 +292,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: "absolute",
-    top: 40, // Ajuste conforme necessário
+    top: 80, // Ajuste conforme necessário
     right: 10,
     backgroundColor: "#FFF",
     borderRadius: 5,

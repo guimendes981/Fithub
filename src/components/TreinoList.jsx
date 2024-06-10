@@ -10,7 +10,13 @@ import {
   Modal,
   ImageBackground,
 } from "react-native";
-import { collection, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../services/firebaseConfig";
 import * as Animatable from "react-native-animatable";
 
@@ -40,7 +46,26 @@ export default function TreinoList() {
     setSelectedTreino(treino);
     setModalVisible(true);
   };
-  
+
+  const handleDelete = async (treinoId, exercicioId) => {
+    const treino = treinos.find((treino) => treino.id === treinoId);
+
+    if (!treino) return;
+
+    const updatedExercicios = treino.exercicios.filter(
+      (exercicio) => exercicio.id !== exercicioId
+    );
+
+    await updateDoc(doc(db, "treinos", treinoId), { exercicios: updatedExercicios });
+
+    const updatedTreinos = treinos.map((t) =>
+      t.id === treinoId ? { ...t, exercicios: updatedExercicios } : t
+    );
+
+    setTreinos(updatedTreinos);
+    setSelectedTreino({ ...treino, exercicios: updatedExercicios });
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.treinoItem}
@@ -49,7 +74,7 @@ export default function TreinoList() {
       <Text style={styles.title}>{item.nome}</Text>
     </TouchableOpacity>
   );
-  
+
   return (
     <ImageBackground
       source={require("../images/background1.jpg")}
@@ -80,24 +105,35 @@ export default function TreinoList() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-            <View style={styles.modalView}>
-  {selectedTreino ? (
-    selectedTreino.exercicios ? (
-      selectedTreino.exercicios.map((exercicio, index) => (
-        <View key={index} style={styles.exercicioItem}>
-          <Text style={styles.text}>Exercício: {exercicio.nome}</Text>
-          <Text style={styles.text}>Peso: {exercicio.peso}</Text>
-          <Text style={styles.text}>Repetições: {exercicio.repeticoes}</Text>
-          <Text style={styles.text}>Séries: {exercicio.series}</Text>
-        </View>
-      ))
-    ) : (
-      <Text style={styles.text}>Nenhum exercício encontrado</Text>
-    )
-  ) : (
-    <Text style={styles.text}>Nenhum treino selecionado</Text>
-  )}
-</View>
+              {selectedTreino ? (
+                selectedTreino.exercicios.length > 0 ? (
+                  selectedTreino.exercicios.map((exercicio, index) => (
+                    <View key={index} style={styles.exercicioItem}>
+                      <Text style={styles.text}>
+                        Exercício: {exercicio.nome}
+                      </Text>
+                      <Text style={styles.text}>Peso: {exercicio.peso}</Text>
+                      <Text style={styles.text}>
+                        Repetições: {exercicio.repeticoes}
+                      </Text>
+                      <Text style={styles.text}>Séries: {exercicio.series}</Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleDelete(selectedTreino.id, exercicio.id)
+                        }
+                      >
+                        <Text style={{ ...styles.text, color: "red" }}>
+                          Deletar
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.text}>Nenhum exercício encontrado</Text>
+                )
+              ) : (
+                <Text style={styles.text}>Nenhum treino selecionado</Text>
+              )}
               <TouchableOpacity
                 style={{ ...styles.button, backgroundColor: "#8A2BE2" }}
                 onPress={() => {
@@ -111,7 +147,7 @@ export default function TreinoList() {
         </Modal>
       </Animatable.View>
     </ImageBackground>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -121,11 +157,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#232323",
     width: "100%",
-    height: "100%",
   },
   backButton: {
     position: "absolute",
-    top: 10,
+    top: 30,
     left: 10,
   },
   heading: {
@@ -133,6 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFF",
     marginBottom: 20,
+    marginTop: "35%",
   },
   topLeft: {
     position: "absolute",
@@ -148,9 +184,10 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     margin: 20,
-    height: 30,
+    height: 40,
     borderRadius: 5,
     width: "50%",
+    paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -163,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#8A2BE2", // Alterado para roxo
+    backgroundColor: "#8A2BE2",
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,

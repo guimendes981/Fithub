@@ -5,25 +5,20 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
-  ImageBackground,
-  ScrollView,
+  ToastAndroid,
 } from "react-native";
 import {
   collection,
   addDoc,
-  deleteDoc,
   updateDoc,
   doc,
   onSnapshot,
 } from "firebase/firestore";
 import { auth, db } from "../services/firebaseConfig";
-import * as Animatable from "react-native-animatable";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Picker } from "@react-native-picker/picker";
-import Home from "./Home";
 
-export default function TreinoForm(user) {
+export default function TreinoForm({ navigation, route }) {
   const [nome, setNome] = useState("");
   const [exercicio, setExercicio] = useState("");
   const [peso, setPeso] = useState("");
@@ -37,13 +32,12 @@ export default function TreinoForm(user) {
 
   const fetchUserData = async () => {
     try {
-      const usuario = auth.currentUser; // Obter o usuário atual
+      const usuario = auth.currentUser;
       if (usuario) {
         onSnapshot(collection(db, "treinos"), (snapshot) => {
           const newTreinos = [];
           snapshot.forEach((doc) => {
             if (usuario.uid === doc.data().userId) {
-              console.log(doc.id, "=>", doc.data());
               newTreinos.push({ id: doc.id, ...doc.data() });
             }
           });
@@ -54,6 +48,7 @@ export default function TreinoForm(user) {
       console.error("Erro ao obter dados do usuário:", error.message);
     }
   };
+
   const Selection = ({ selectedValue, setSelectedValue }) => (
     <Picker
       style={styles.picker}
@@ -72,6 +67,7 @@ export default function TreinoForm(user) {
   const handleSalvar = async () => {
     const user = auth.currentUser;
     const novoExercicio = {
+      id: Math.random().toString(36).substr(2, 9),
       nome: exercicio,
       peso: peso,
       series: series,
@@ -81,7 +77,6 @@ export default function TreinoForm(user) {
     const treinoExistente = treinos.find((treino) => treino.nome === nome);
 
     if (treinoExistente) {
-      // Adiciona o novo exercício ao treino existente
       const atualizadoTreinos = treinos.map((treino) => {
         if (treino.nome === nome) {
           return {
@@ -94,13 +89,11 @@ export default function TreinoForm(user) {
 
       setTreinos(atualizadoTreinos);
 
-      // Atualize o Firestore
       const treinoDocRef = doc(db, "treinos", treinoExistente.id);
       await updateDoc(treinoDocRef, {
         exercicios: [...treinoExistente.exercicios, novoExercicio],
       });
     } else {
-      // Cria um novo treino
       const novoTreino = {
         userId: user.uid,
         nome: nome,
@@ -117,101 +110,56 @@ export default function TreinoForm(user) {
     setPeso("");
     setSeries("");
     setRepeticoes("");
-  };
 
-  const allExercises = treinos.flatMap((treino) => treino.exercicios);
-
-  const handleDelete = async (id) => {
-    const treinoRef = doc(db, "treinos", id);
-
-    try {
-      await deleteDoc(treinoRef);
-      console.log(`Treino with id ${id} has been deleted.`);
-    } catch (e) {
-      console.error("Error deleting treino: ", e);
-    }
+    ToastAndroid.show("Exercício cadastrado com sucesso!", ToastAndroid.SHORT);
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Home")}
-        >
-          <Icon name="arrow-left" size={30} color="#900" />
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Icon name="arrow-left" size={30} color="#8A2BE2" style={{ marginTop: 30 }} />
+      </TouchableOpacity>
 
-      <Text style={styles.title}>
-        Adicionar Exercício
-      </Text>
+      <Text style={styles.title}>Adicionar Exercício</Text>
 
-
-        <Selection selectedValue={nome} setSelectedValue={setNome} />
-        <TextInput
-          placeholder="Nome do Exercício"
-          style={styles.input}
-          onChangeText={(text) => setExercicio(text)}
-          value={exercicio}
-        />
-        <TextInput
-          placeholder="Peso (kg)"
-          style={styles.input}
-          onChangeText={(text) => setPeso(text)}
-          value={peso}
-          keyboardType="numeric"
-        />
-        <TextInput
-          placeholder="Séries"
-          style={styles.input}
-          onChangeText={(text) => setSeries(text)}
-          value={series}
-          keyboardType="numeric"
-        />
-        <TextInput
-          placeholder="Repetições"
-          style={styles.input}
-          onChangeText={(text) => setRepeticoes(text)}
-          value={repeticoes}
-          keyboardType="numeric"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleSalvar}>
-          <Text style={styles.buttonText}>Salvar</Text>
-        </TouchableOpacity>
-
-        <FlatList
-          data={allExercises}
-          ListHeaderComponent={
-            <>
-              <Text style={styles.title2}>Seus Exercícios</Text>
-            </>
-          }
-          renderItem={({ item }) => (
-            <ScrollView>
-              <View style={styles.card}>
-                <Text style={styles.cardText}>Nome: {item.nome}</Text>
-                <Text style={styles.cardText}>Peso: {item.peso}</Text>
-                <Text style={styles.cardText}>Séries: {item.series}</Text>
-                <Text style={styles.cardText}>
-                  Repetições: {item.repeticoes}
-                </Text>
-                <TouchableOpacity onPress={() => handleDelete(item.id)}>
-                  <Icon
-                    name="trash"
-                    size={20}
-                    color="#900"
-                    style={styles.deleteIcon}
-                  />
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
-    </>
+      <Selection selectedValue={nome} setSelectedValue={setNome} />
+      <TextInput
+        placeholder="Nome do Exercício"
+        style={styles.input}
+        onChangeText={(text) => setExercicio(text)}
+        value={exercicio}
+      />
+      <TextInput
+        placeholder="Peso (kg)"
+        style={styles.input}
+        onChangeText={(text) => setPeso(text)}
+        value={peso}
+        keyboardType="numeric"
+      />
+      <TextInput
+        placeholder="Séries"
+        style={styles.input}
+        onChangeText={(text) => setSeries(text)}
+        value={series}
+        keyboardType="numeric"
+      />
+      <TextInput
+        placeholder="Repetições"
+        style={styles.input}
+        onChangeText={(text) => setRepeticoes(text)}
+        value={repeticoes}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity style={styles.button} onPress={handleSalvar}>
+        <Text style={styles.buttonText}>Salvar</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
@@ -243,12 +191,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 60,
   },
-  title2: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#8A2BE2",
-    marginTop: 30,
-  },
   input: {
     width: "80%",
     height: 40,
@@ -271,37 +213,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFF",
     fontWeight: "bold",
-  },
-  treinoItem: {
-    marginTop: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 5,
-  },
-  treinoInfo: {
-    flex: 1,
-  },
-  deleteIcon: {
-    marginLeft: 10,
-  },
-  card: {
-    marginTop: 20,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    alignSelf: "center",
-    width: "80%",
-  },
-  cardText: {
-    marginBottom: 10,
   },
 });

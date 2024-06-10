@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../services/firebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
+import { IconButton } from "react-native-paper";
 
 export default function CadastroForm({ navigation }) {
   const [nome, setNome] = useState("");
@@ -96,10 +97,9 @@ export default function CadastroForm({ navigation }) {
         const errorMessage = error.message;
         setCadastrarError(errorMessage);
       });
-      
 
-      console.log(peso);
-    };
+    console.log(peso);
+  };
 
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -107,7 +107,7 @@ export default function CadastroForm({ navigation }) {
 
   const toggleSexoOptions = () => {
     setSexoOptionsVisible(!sexoOptionsVisible);
-    setAtivoOptionsVisible(false); 
+    setAtivoOptionsVisible(false);
   };
 
   const toggleAtivoOptions = () => {
@@ -155,6 +155,14 @@ export default function CadastroForm({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <IconButton
+        icon="arrow-left"
+        size={30}
+        color="#8A2BE2"
+        style={{ marginTop: 30, left: 0 }}
+        onPress={() => navigation.navigate("LoginForm")}
+      />
+
       <Text style={styles.title}>Inscreva-se</Text>
 
       <Text style={styles.label}>Qual é o seu nome?</Text>
@@ -434,7 +442,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#232323",
-    paddingVertical: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
@@ -447,6 +456,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#8A2BE2",
     marginBottom: 5,
+    zIndex: -1,
   },
   input: {
     width: "80%",
@@ -503,6 +513,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#8A2BE2",
     borderRadius: 5,
-    zIndex: 9999999,
+    zIndex: 9999,
   },
 });

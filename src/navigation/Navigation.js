@@ -36,7 +36,7 @@ export default function Navigation({ user, updateUser }) {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
-          initialParams={{ user, updateUser }} // Pass both user and updateUser to the Home component
+          initialParams={{ userId: user?.uid }} // Pass only necessary data
         />
         <Stack.Screen
           name="LoginForm"
