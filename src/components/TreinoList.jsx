@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#232323",
+    paddingTop: 50,
     width: "100%",
   },
   backButton: {
