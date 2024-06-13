@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
@@ -9,7 +8,9 @@ import {
   TouchableOpacity,
   Modal,
   ImageBackground,
+  TextInput,
 } from "react-native";
+import React, { useEffect, useState } from "react";
 import {
   collection,
   deleteDoc,
@@ -24,6 +25,7 @@ export default function TreinoList() {
   const [treinos, setTreinos] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTreino, setSelectedTreino] = useState(null);
+  const [selectedExercicio, setSelectedExercicio] = useState(null);
 
   const navigation = useNavigation();
 
@@ -42,9 +44,58 @@ export default function TreinoList() {
     }
   }, []);
 
+  const handleEditButtonPress = (treinoId, exercicioId) => {
+    const treino = treinos.find((treino) => treino.id === treinoId);
+    const exercicio = treino.exercicios.find(
+      (exercicio) => exercicio.id === exercicioId
+    );
+
+    setSelectedTreino(treino);
+    setSelectedExercicio(exercicio);
+  };
+
+  const handleOpenEditModal = (treinoId, exercicioId) => {
+    const treino = treinos.find((treino) => treino.id === treinoId);
+    const exercicio = treino.exercicios.find(
+      (exercicio) => exercicio.id === exercicioId
+    );
+
+    setSelectedTreino(treino);
+    setSelectedExercicio(exercicio);
+    setModalVisible(true);
+  };
+
   const handlePress = (treino) => {
     setSelectedTreino(treino);
+    setSelectedExercicio(null); // Adicionado para garantir que nenhum exercício seja selecionado
     setModalVisible(true);
+  };
+  
+  const handleSave = async () => {
+    if (!selectedExercicio) return;
+
+    const treino = treinos.find((t) => t.id === selectedTreino.id);
+    const updatedExercicios = treino.exercicios.map((exercicio) =>
+      exercicio.id === selectedExercicio.id ? selectedExercicio : exercicio
+    );
+
+    await updateDoc(doc(db, "treinos", selectedTreino.id), {
+      exercicios: updatedExercicios,
+    });
+
+    const updatedTreinos = treinos.map((t) =>
+      t.id === selectedTreino.id ? { ...t, exercicios: updatedExercicios } : t
+    );
+
+    setTreinos(updatedTreinos);
+
+    setSelectedTreino({ ...selectedTreino, exercicios: updatedExercicios });
+    setSelectedExercicio(null);
+    setModalVisible(false);
+  };
+
+  const handleEdit = (field, value) => {
+    setSelectedExercicio({ ...selectedExercicio, [field]: value });
   };
 
   const handleDelete = async (treinoId, exercicioId) => {
@@ -56,7 +107,9 @@ export default function TreinoList() {
       (exercicio) => exercicio.id !== exercicioId
     );
 
-    await updateDoc(doc(db, "treinos", treinoId), { exercicios: updatedExercicios });
+    await updateDoc(doc(db, "treinos", treinoId), {
+      exercicios: updatedExercicios,
+    });
 
     const updatedTreinos = treinos.map((t) =>
       t.id === treinoId ? { ...t, exercicios: updatedExercicios } : t
@@ -105,27 +158,85 @@ export default function TreinoList() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {selectedTreino ? (
+              {selectedExercicio ? (
+                <View style={styles.exercicioItem}>
+                  <Text style={styles.text}>Nome:</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={selectedExercicio.nome}
+                    onChangeText={(text) => handleEdit("nome", text)}
+                  />
+                  <Text style={styles.text}>Peso:</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={String(selectedExercicio.peso)}
+                    onChangeText={(text) => handleEdit("peso", text)}
+                  />
+                  <Text style={styles.text}>Repetições:</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={String(selectedExercicio.repeticoes)}
+                    onChangeText={(text) => handleEdit("repeticoes", text)}
+                  />
+                  <Text style={styles.text}>Séries:</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={String(selectedExercicio.series)}
+                    onChangeText={(text) => handleEdit("series", text)}
+                  />
+                  <TouchableOpacity
+                    style={{ ...styles.button, backgroundColor: "#8A2BE2" }}
+                    onPress={handleSave}
+                  >
+                    <Text style={styles.buttonText}>Salvar</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : selectedTreino ? (
                 selectedTreino.exercicios.length > 0 ? (
                   selectedTreino.exercicios.map((exercicio, index) => (
                     <View key={index} style={styles.exercicioItem}>
-                      <Text style={styles.text}>
-                        Exercício: {exercicio.nome}
-                      </Text>
+                      <Text style={styles.text}>Nome: {exercicio.nome}</Text>
                       <Text style={styles.text}>Peso: {exercicio.peso}</Text>
                       <Text style={styles.text}>
                         Repetições: {exercicio.repeticoes}
                       </Text>
-                      <Text style={styles.text}>Séries: {exercicio.series}</Text>
-                      <TouchableOpacity
-                        onPress={() =>
-                          handleDelete(selectedTreino.id, exercicio.id)
-                        }
+                      <Text style={styles.text}>
+                        Séries: {exercicio.series}
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
                       >
-                        <Text style={{ ...styles.text, color: "red" }}>
-                          Deletar
+                        <Text
+                          style={{
+                            ...styles.text,
+                            color: "#8A2BE2",
+                            textDecorationLine: "underline",
+                          }}
+                          onPress={() =>
+                            handleEditButtonPress(
+                              selectedTreino.id,
+                              exercicio.id
+                            )
+                          }
+                        >
+                          Editar
                         </Text>
-                      </TouchableOpacity>
+                        <Text
+                          style={{
+                            ...styles.text,
+                            color: "#8A2BE2",
+                            textDecorationLine: "underline",
+                          }}
+                          onPress={() =>
+                            handleDelete(selectedTreino.id, exercicio.id)
+                          }
+                        >
+                          Excluir
+                        </Text>
+                      </View>
                     </View>
                   ))
                 ) : (
@@ -158,6 +269,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#232323",
     paddingTop: 50,
     width: "100%",
+  },
+  textInput: {
+    height: 40,
+    borderColor: '#000', // Altera a cor da borda
+    borderWidth: 2, // Aumenta a largura da borda
+    borderRadius: 5, // Adiciona um raio à borda para torná-la arredondada
+    paddingLeft: 10, // Adiciona um preenchimento à esquerda
+    marginBottom: 15, // Adiciona um espaço abaixo do campo de texto
   },
   backButton: {
     position: "absolute",
@@ -218,6 +337,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
+    width: "80%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
