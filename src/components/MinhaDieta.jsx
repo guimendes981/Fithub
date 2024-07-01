@@ -16,7 +16,7 @@ const MinhaDieta = ({ visible, onClose }) => {
 
   const fetchUserData = async () => {
     try {
-      const usuario = auth.currentUser; // Obter o usuário atual
+      const usuario = auth.currentUser;
       if (usuario) {
         onSnapshot(collection(db, "users"), (snapshot) => {
           snapshot.forEach((doc) => {

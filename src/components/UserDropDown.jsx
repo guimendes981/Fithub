@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     right: 10,
     backgroundColor: '#FFF',
     borderRadius: 5,
-    elevation: 3, // Adiciona uma sombra para efeito de elevação
+    elevation: 3,
     flexDirection: 'row',
   },
   menuIcon: {

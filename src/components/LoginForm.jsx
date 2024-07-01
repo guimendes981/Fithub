@@ -75,7 +75,7 @@ const LoginForm = ({ navigation }) => {
       .then(() => {
         Alert.alert("E-mail de recuperação de senha enviado!");
         setResetEmail("");
-        setModalVisible(false); // Fecha o modal após o envio do e-mail
+        setModalVisible(false); 
       })
       .catch((error) => {
         Alert.alert(error.message);

@@ -20,7 +20,7 @@ export default function Navigation({ user, updateUser }) {
     const unsubscribe = auth.onAuthStateChanged((userData) => {
       if (userData) {
         setInitialRouteName("Home");
-        updateUser(userData); // Atualize o estado do usuário quando estiver autenticado
+        updateUser(userData);
       } else {
         setInitialRouteName("LoginForm");
       }
@@ -36,7 +36,7 @@ export default function Navigation({ user, updateUser }) {
           name="Home"
           component={Home}
           options={{ headerShown: false }}
-          initialParams={{ userId: user?.uid }} // Pass only necessary data
+          initialParams={{ userId: user?.uid }}
         />
         <Stack.Screen
           name="LoginForm"

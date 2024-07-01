@@ -67,7 +67,7 @@ export default function TreinoList() {
 
   const handlePress = (treino) => {
     setSelectedTreino(treino);
-    setSelectedExercicio(null); // Adicionado para garantir que nenhum exercício seja selecionado
+    setSelectedExercicio(null);
     setModalVisible(true);
   };
   
@@ -272,11 +272,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    borderColor: '#000', // Altera a cor da borda
-    borderWidth: 2, // Aumenta a largura da borda
-    borderRadius: 5, // Adiciona um raio à borda para torná-la arredondada
-    paddingLeft: 10, // Adiciona um preenchimento à esquerda
-    marginBottom: 15, // Adiciona um espaço abaixo do campo de texto
+    borderColor: '#000',
+    borderWidth: 2, 
+    borderRadius: 5, 
+    paddingLeft: 10, 
+    marginBottom: 15, 
   },
   backButton: {
     position: "absolute",

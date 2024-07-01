@@ -11,7 +11,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { WebView } from "react-native-webview";
 import { Ionicons } from "@expo/vector-icons";
-import Navbar from "./NavBar"; // Importe o componente
+import Navbar from "./NavBar";
 import { auth, db } from "../services/firebaseConfig";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import MinhaDieta from "./MinhaDieta";
@@ -40,12 +40,12 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     getRandomQuote();
-    fetchUserData(); // Chama a função para recuperar os dados do usuário ao montar o componente
+    fetchUserData(); 
 
     Animated.timing(fadeAnim, {
-      toValue: 1, // Valor final: totalmente visível
-      duration: 2000, // Duração da animação em milissegundos
-      useNativeDriver: true, // Use o driver nativo, se disponível
+      toValue: 1, 
+      duration: 2000, 
+      useNativeDriver: true, 
     }).start();
   }, []);
 
@@ -57,7 +57,6 @@ export default function Home({ navigation }) {
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
       const email = user.email;
@@ -66,14 +65,13 @@ export default function Home({ navigation }) {
       const peso = user.peso;
       console.log("Usuário logado:", uid);
     } else {
-      // User is signed out
       console.log("Usuário deslogado");
     }
   });
 
   const fetchUserData = async () => {
     try {
-      const usuario = auth.currentUser; // Obter o usuário atual
+      const usuario = auth.currentUser; 
       if (usuario) {
         // const docRef = doc(db, "users", usuario.uid);
         // const docSnap = await getDoc(docRef);
@@ -121,22 +119,20 @@ export default function Home({ navigation }) {
 
   const handleLogout = async () => {
     try {
-      await auth.signOut(); // Desloga o usuário
-      navigation.navigate("LoginForm"); // Redireciona para a tela de login após o logout
+      await auth.signOut();
+      navigation.navigate("LoginForm"); 
       console.log("Usuário deslogado com sucesso!");
     } catch (error) {
       console.error("Erro ao fazer logout:", error.message);
     }
   };
 
-
-    // Função para calcular o IMC e o IGC
     const calculateIndices = (userData) => {
-      const alturaMetros = userData.altura / 100; // Convertendo altura para metros
-      const imcValue = userData.peso / (alturaMetros * alturaMetros); // Fórmula do IMC
-      const igcValue = 1.2 * imcValue + 0.23 * userData.idade - 10.8 * userData.sexo - 5.4; // Fórmula do IGC
-      setImc(imcValue.toFixed(2)); // Definindo o IMC com duas casas decimais
-      setIgc(igcValue.toFixed(2)); // Definindo o IGC com duas casas decimais
+      const alturaMetros = userData.altura / 100; 
+      const imcValue = userData.peso / (alturaMetros * alturaMetros); 
+      const igcValue = 1.2 * imcValue + 0.23 * userData.idade - 10.8 * userData.sexo - 5.4;
+      setImc(imcValue.toFixed(2));
+      setIgc(igcValue.toFixed(2)); 
     };
     
   return (
@@ -146,7 +142,7 @@ export default function Home({ navigation }) {
     >
       <TouchableOpacity
         style={styles.profileIcon}
-        onPress={() => setDropdownVisible(!dropdownVisible)} // Toggle para mostrar/ocultar o menu suspenso
+        onPress={() => setDropdownVisible(!dropdownVisible)}
       >
         <FontAwesome name="user" size={28} color="#FFF" />
       </TouchableOpacity>
@@ -191,7 +187,7 @@ export default function Home({ navigation }) {
       <View style={styles.buttonContainer}>
         {/* <TouchableOpacity
           style={styles.button}
-          onPress={() => setModalVisible(true)} // Abre o modal ao pressionar
+          onPress={() => setModalVisible(true)} 
         >
           <Text style={styles.buttonText}>Seu treino de hoje</Text>
         </TouchableOpacity> */}
@@ -199,7 +195,7 @@ export default function Home({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={
-            () => navigation.navigate("TreinoList", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+            () => navigation.navigate("TreinoList", { user }) 
           }
         >
           <Text style={styles.buttonText}>Seus treinos</Text>
@@ -207,7 +203,7 @@ export default function Home({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={
-            () => navigation.navigate("TreinoForm", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+            () => navigation.navigate("TreinoForm", { user })
           }
         >
           <Text style={styles.buttonText}>Adicionar treino</Text>
@@ -215,7 +211,7 @@ export default function Home({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={
-            () => navigation.navigate("Biblioteca", { user }) // Passa o usuário como parâmetro para a tela de formulário de treino
+            () => navigation.navigate("Biblioteca", { user })
           }
         >
           <Text style={styles.buttonText}>Biblioteca de exercícios</Text>
@@ -292,7 +288,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: "absolute",
-    top: 80, // Ajuste conforme necessário
+    top: 80,
     right: 10,
     backgroundColor: "#FFF",
     borderRadius: 5,
@@ -300,7 +296,7 @@ const styles = StyleSheet.create({
     borderColor: "#8A2BE2",
     paddingVertical: 5,
     paddingHorizontal: 10,
-    zIndex: 1, // Para ficar na frente de outros elementos
+    zIndex: 1,
   },
   dropdownOption: {
     fontSize: 16,
